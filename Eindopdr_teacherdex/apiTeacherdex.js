@@ -49,27 +49,16 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       })
 
         // POST docent
-      app.post('/api/docenten/', async (req, res) => {
-        //extract the values of the request
-        const { naam, achternaam, afkorting, email,img, vak_id, klas_id } = req.body; 
-         // Create a new docent object using the extracted values
-        const docent = { naam, achternaam, afkorting, email,img, vak_id, klas_id  };
-      
-        const result = await database.collection('docenten').insertOne(docent);
-      
-        if (result.acknowledged) {
-          return res.status(201).send('Docent aangemaakt');
-        } else {
-          return res.status(400).send('Error 400, Docent niet aangemaakt');
-        }
-      });
+        app.post('/api/docenten', async (req, res) => {
+            const results = await database.collection('docenten').insertOne(req.body)
+            if (results.acknowledged) return res.status(201).send("row inserted")
+            res.status(400).end()
+          })   
 
       // PATCH docent
       app.patch('/api/docenten/:id', async (req, res) => {
         console.log(req.params.id);
         const query = { "_id" : new ObjectId(req.params.id) };
-        console.log(query);
-        console.log(req.body)
         const results = await database.collection('docenten').replaceOne(query, req.body)
         console.log(results)
         if (results.acknowledged) return res.status(200).send("row updated")
