@@ -1,0 +1,261 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital@1&display=swap");
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+html {
+	font-size: 62.5%;
+}
+body {
+	font-family: "Lato", sans-serif;
+	background-color: #ede7e3;
+}
+.dark {
+	transition: 0.05s ease-in-out;
+	background-color: #264653;
+}
+.dark .card {
+	-webkit-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+	box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+	background-color: #023047;
+}
+
+.main {
+	display: flex;
+	flex-wrap: wrap;
+}
+header {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	font-size: 3rem;
+	text-align: center;
+	margin: 2rem;
+	color: #fff;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+		1px 1px 0 #000;
+	cursor: pointer;
+}
+header input {
+	padding: 2rem;
+}
+#search {
+	padding: 2rem 1rem;
+	cursor: pointer;
+}
+.card {
+	flex: 1;
+	width: 300px;
+	height: 450px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	font-size: 3rem;
+	margin: 10px;
+/* 	margin-right: 20px; */
+	border: none;
+	box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.45);
+	-webkit-box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.45);
+	-moz-box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.45);
+	border-radius: 20px;
+	padding: 2rem;
+	background-color: #16697a;
+}
+.card:hover {
+	border: none;
+	box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.45);
+	-webkit-box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.45);
+	-moz-box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.45);
+}
+p {
+	text-transform: uppercase;
+	color: #fff;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+p:hover {
+	background-color: rgb(250, 190, 112);
+	text-shadow: none;
+	color: #000;
+}
+.card img {
+	width: 300px;
+	height: 300px;
+}
+
+.big-card {
+	margin-top: 5rem;
+	box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.45);
+	-webkit-box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.45);
+	-moz-box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.45);
+	max-width: 400px;
+	text-align: center;
+	background-color: #023047;
+	padding: 2rem;
+}
+.big-card img {
+	width: 20rem;
+}
+.cross {
+	height: 3px;
+	width: 30px;
+	background-color: #ede7e3;
+	margin-top: 4px;
+	position: absolute;
+	top: 2rem;
+	right: 2rem;
+	cursor: pointer;
+}
+.teacher-details {
+	margin: 2rem;
+	width: 100%;
+	text-align: left;
+}
+#name {
+	font-size: 6rem;
+	text-transform: capitalize;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+#about {
+	font-size: 1.5rem;
+	text-shadow: none;
+	color: rgb(255, 255, 255);
+	font-family: sans-serif;
+	margin-top: 1rem;
+	text-align: center;
+}
+.teacher-details {
+	font-size: 3rem;
+	color: rgb(255, 255, 255);
+	text-align: center;
+}
+.line1 {
+	transform: rotate(-45deg) translate(-2px, 3px);
+}
+.line2 {
+	opacity: 0;
+}
+.line3 {
+	transform: rotate(45deg) translate(1px, 3px);
+}
+.none {
+	display: none;
+}
+button {
+	background-color: #e76f51;
+	border: 1px solid #e76f51;
+	color: #023047;
+	font-weight: 600;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #023047;
+    color: #e76f51;
+}
+
+.button-crud{
+    display: flex;
+    justify-content: center;
+}
+input {
+	outline: none;
+}
+
+
+/*NAV*/
+
+nav {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 20px;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  nav li {
+    display: inline-block;
+    margin-left: 20px;
+  }
+  
+  nav a {
+    display: block;
+    padding: 10px;
+    font-size: 2rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: #fff;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  nav a:hover {
+    background-color: #e76f51;
+    color: #fff;
+  }
+
+  /* Form styles */
+  .form-popup {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 15px;
+    border: 1px solid #ccc;
+    z-index: 9;
+    background-color: #f1f1f1;
+    max-width: 500px;
+    padding: 20px;
+  }
+  
+  .form-container input[type=text], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+  }
+  
+  .form-container input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .form-container input[type=submit]:hover {
+    background-color: #45a049;
+  }
+  
+  .form-container .close {
+    color: #000;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .form-container .close:hover,
+  .form-container .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .form-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
