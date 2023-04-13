@@ -66,25 +66,20 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
       // PATCH docent
       app.patch('/api/docenten/:id', async (req, res) => {
+        console.log(req.params.id);
         const query = { "_id" : new ObjectId(req.params.id) };
-           //extract the values of the request
-           const { naam, achternaam, afkorting, email,img, vak_id, klas_id } = req.body; 
-           // Create a new docent object using the extracted values
-          const update = { naam, achternaam, afkorting, email,img, vak_id, klas_id  };
-      
-        const result = await database.collection('docenten').updateOne(query, update);
-      
-        if (result.acknowledged) {
-          return res.status(200).send("Docent geupdate");
-        } else {
-          return res.status(400).send("Error 400: Docent niet geupdate");
-        }
+        console.log(query);
+        console.log(req.body)
+        const results = await database.collection('docenten').replaceOne(query, req.body)
+        console.log(results)
+        if (results.acknowledged) return res.status(200).send("row updated")
+        res.status(400).end()
       });
 
       // DELETE docent
     app.delete('/api/docenten/:id', async (req, res) => {
         const query = { "_id" : new ObjectId(req.params.id) }
-        const results = await database.collection('docenten').deleteOne(query)
+        const result = await database.collection('docenten').deleteOne(query)
 
         if (result.acknowledged) {
             return res.status(200).send("Docent verwijderd");
