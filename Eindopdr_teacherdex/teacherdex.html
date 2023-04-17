@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Teacherdex</title>
+</head>
+<body class="dark">
+    <header>
+        <h1 onclick="enable_dark_mode()">Teacherdex</h1>
+        <nav>
+            <ul>
+                <li><a href="teacherdex.html">Docenten</a></li>
+                <li><a href="klassen.html">Klassen</a></li>
+                <li><a href="vakken.html">Vakken</a></li>
+            </ul>
+        </nav>
+        <div class="button-crud">
+            <button id="add">Add teacher</button>
+        </div>
+    </header>
+    <div class="form-popup" id="myForm">
+        <form class="form-container">
+          <h2>Add Teacher</h2>
+          <label for="naam"><b>Naam</b></label>
+          <input type="text" placeholder="Enter Naam" name="naam" required>
+      
+          <label for="achternaam"><b>Achternaam</b></label>
+          <input type="text" placeholder="Enter Achternaam" name="achternaam" required>
+      
+          <label for="afkorting"><b>Afkorting</b></label>
+          <input type="text" placeholder="Enter Afkorting" name="afkorting" required>
+      
+          <label for="email"><b>Email</b></label>
+          <input type="text" placeholder="Enter Email" name="email" required>
+      
+          <label for="klas"><b>Klas</b></label>
+          <select name="klas" id="klas" required>
+            <option value="">Select a Klas</option>
+            <option value="klas1">Klas 1</option>
+            <option value="klas2">Klas 2</option>
+            <option value="klas3">Klas 3</option>
+          </select>
+      
+          <label for="vak"><b>Vak</b></label>
+          <select name="vak" id="vak" required>
+            <option value="">Select a Vak</option>
+            <option value="vak1">Vak 1</option>
+            <option value="vak2">Vak 2</option>
+            <option value="vak3">Vak 3</option>
+          </select>
+      
+          <button type="submit" class="btn">Add Teacher</button>
+          <button type="button" class="close">Close</button>
+        </form>
+      </div>
+    <section class="main">
+        <div class="search_result none">
+            <div class="big-card">
+                <img src="" alt="" id="image" />
+                <h1 id="name"></h1>
+                <p id="afkorting"></p>
+                <div class="teacher-details">
+                    <div class="email"></div>
+                    <div class="klassen"></div>
+                    <div class="vakken"></div>
+                </div>
+                <div class="close">
+                    <div class="cross line1"></div>
+                    <div class="cross line3"></div>
+                </div>
+                <img src="" alt="" id="image" />
+                <h1 id="name"></h1>
+                <p id="afkorting"></p>
+                <div class="teacher-details">
+                    <div class="email"></div>
+                    <div class="klassen"></div>
+                    <div class="vakken"></div>
+                </div>
+                <div class="close" onclick=" remove()">
+                    <div class="cross line1"></div>
+                    <div class="cross line3"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
