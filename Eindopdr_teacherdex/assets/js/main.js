@@ -82,3 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formContainer.style.display = "none";
   });
 });
+
+// * popup modal
+
+
