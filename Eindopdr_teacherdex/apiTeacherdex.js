@@ -6,6 +6,8 @@ app.use(cors("*"))        // Access-Control-Allow-Origin: * en preflight
 const { MongoClient } = require("mongodb");
 const ObjectId = require('mongodb').ObjectId;
 const connectionString = 'mongodb://127.0.0.1:27017/'
+// export file as app for testing purposes
+module.exports = app;
 
 MongoClient.connect(connectionString, { useUnifiedTopology: true })
 .then(client => {
