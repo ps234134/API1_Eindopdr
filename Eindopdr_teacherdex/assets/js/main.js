@@ -23,7 +23,7 @@ fetch(klassenApi)
   .then((data) => {
     data.forEach((klas) => {
       const option = document.createElement("option");
-      option.value = klas.id;
+      option.value = klas._id; // set the value to the _id of the class
       option.textContent = klas.naam;
       klasSelect.appendChild(option);
     });
@@ -35,7 +35,7 @@ fetch(vakkenApi)
   .then((data) => {
     data.forEach((vak) => {
       const option = document.createElement("option");
-      option.value = vak.id;
+      option.value = vak._id; // set the value to the _id of the subject
       option.textContent = vak.naam;
       vakSelect.appendChild(option);
     });
@@ -67,7 +67,7 @@ form.addEventListener("submit", (event) => {
     achternaam,
     afkorting,
     email,
-    klasId,
+    klasId, // include klasId in teacher object
     vakId,
   };
 

@@ -105,7 +105,8 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
         const query = 'naam' in req.query  ? {naam : new RegExp(req.query.naam,'i')} : {}
         const sort = 'sort' in req.query  ? {naam : 1} : {}
-        const results = await database.collection('vakken').find(query).sort(sort).toArray()
+        const projection = { _id: 1, naam: 1 } // include only _id and naam fields
+        const results = await database.collection('vakken').find(query).sort(sort).projection(projection).toArray()
         res.send(results)
         
     })
@@ -126,7 +127,8 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
         const query = 'naam' in req.query  ? {naam : new RegExp(req.query.naam,'i')} : {}
         const sort = 'sort' in req.query  ? {naam : 1} : {}
-        const results = await database.collection('klassen').find(query).sort(sort).toArray()
+        const projection = { _id: 1, naam: 1 } // include only _id and naam fields
+        const results = await database.collection('klassen').find(query).sort(sort).project(projection).toArray()
         res.send(results)
         
     })
