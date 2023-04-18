@@ -73,6 +73,7 @@
 
 const api = "http://127.0.0.1:8081/api/docenten";
 
+
 const fetchDocenten = async () => {
   const response = await fetch(api);
   const data = await response.json();
@@ -106,4 +107,3 @@ const generateCards = async () => {
 generateCards();
 
 
-  
