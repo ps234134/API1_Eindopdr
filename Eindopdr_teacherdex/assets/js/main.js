@@ -1,84 +1,95 @@
-// * Main api handler
-function fetch_api(i) {
-  const api = `https://pokeapi.co/api/v2/pokemon/${i}/`;
-  const promise = fetch(api);
-  return promise.then((response) => {
-    return response.json();
-  });
-}
-
-// * Generate pokemon cards funtion
-function generate_pokemons() {
-  for (let i = 1; i < 10; i++) {
-    let pokemon_card = fetch_api(i);
-    pokemon_card.then((data) => {
-      const card = document.createElement("div");
-      card.classList.add("card");
-      const img = document.createElement("img");
-      img.src = data.sprites.other.dream_world.front_default;
-      const pokemon_name = document.createElement("p");
-      pokemon_name.innerText = data.name;
-      card.appendChild(img);
-      card.appendChild(pokemon_name);
-      const main = document.querySelector(".main");
-      main.appendChild(card);
-    });
-  }
-}
 
 // * Dark mode
 function enable_dark_mode() {
   document.body.classList.toggle("dark");
 }
 
-// * Close search results
-function remove() {
-  const search_results = document.querySelector(".search_result");
-  search_results.classList.add("none");
-}
-
-//*  Generate pokemon cards
-generate_pokemons();
-
 // * Add teachers
 
-document.addEventListener("DOMContentLoaded", () => {
-  const addButton = document.getElementById("add");
-  const formContainer = document.querySelector(".form-popup");
-  const closeButton = document.querySelector(".form-popup .close");
+const klassenApi = "http://127.0.0.1:8081/api/klassen";
+const vakkenApi = "http://127.0.0.1:8081/api/vakken";
+const docentenApi = "http://127.0.0.1:8081/api/docenten";
 
-  addButton.addEventListener("click", () => {
-    formContainer.style.display = "block";
+const addBtn = document.getElementById("add");
+const form = document.querySelector(".form-popup");
+const closeBtn = document.querySelector(".form-popup .close");
+const klasSelect = document.getElementById("klas");
+const vakSelect = document.getElementById("vak");
+
+
+// Load all classes
+fetch(klassenApi)
+  .then((response) => response.json())
+  .then((data) => {
+    data.forEach((klas) => {
+      const option = document.createElement("option");
+      option.value = klas._id; // set the value to the _id of the class
+      option.textContent = klas.naam;
+      klasSelect.appendChild(option);
+    });
   });
 
- 
-
-  closeButton.addEventListener("click", () => {
-    formContainer.style.display = "none";
+// Load all subjects
+fetch(vakkenApi)
+  .then((response) => response.json())
+  .then((data) => {
+    data.forEach((vak) => {
+      const option = document.createElement("option");
+      option.value = vak._id; // set the value to the _id of the subject
+      option.textContent = vak.naam;
+      vakSelect.appendChild(option);
+    });
   });
 
-  const addTeacherForm = document.querySelector(".form-container");
-
-  addTeacherForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const naam = addTeacherForm.querySelector('input[name="naam"]').value;
-    const achternaam = addTeacherForm.querySelector(
-      'input[name="achternaam"]'
-    ).value;
-    const afkorting = addTeacherForm.querySelector(
-      'input[name="afkorting"]'
-    ).value;
-    const email = addTeacherForm.querySelector('input[name="email"]').value;
-    const klas = addTeacherForm.querySelector('select[name="klas"]').value;
-    const vak = addTeacherForm.querySelector('select[name="vak"]').value;
-
-    // TODO: Add teacher to database or display it on the page
-    console.log(
-      `Naam: ${naam}, Achternaam: ${achternaam}, Afkorting: ${afkorting}, Email: ${email}, Klas: ${klas}, Vak: ${vak}`
-    );
-
-    addTeacherForm.reset();
-    formContainer.style.display = "none";
-  });
+// Add teacher form
+addBtn.addEventListener("click", () => {
+  form.style.display = "block";
 });
+
+// Close form
+closeBtn.addEventListener("click", () => {
+  form.style.display = "none";
+});
+
+// Submit form
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const naam = document.querySelector('input[name="naam"]').value;
+  const achternaam = document.querySelector('input[name="achternaam"]').value;
+  const afkorting = document.querySelector('input[name="afkorting"]').value;
+  const email = document.querySelector('input[name="email"]').value;
+  const klasId = klasSelect.value;
+  const vakId = vakSelect.value;
+
+  const teacher = {
+    naam,
+    achternaam,
+    afkorting,
+    email,
+    klasId, // include klasId in teacher object
+    vakId,
+  };
+
+  fetch(docentenApi, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(teacher),
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log("Teacher added successfully");
+        form.style.display = "none";
+        location.reload();
+      } else {
+        console.error("Error:", response.statusText);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+});
+
+
