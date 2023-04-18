@@ -1,15 +1,10 @@
-// Supertest is a javascript library for testing http request
 // npx jest to run the test ;)
 const request = require('supertest');
 const app = require('../apiTeacherdex');
-
-
+let createdDocentId;
 
 describe('POST /api/docenten', () => {
-  let createdDocentId;
-
-  test('responds with JSON and creates a new docent', async () => {
-    // Create a new docent without an _id
+  test('creates, retrieves, updates, and deletes a new docent', async () => {
     const newDocent = {
       naam: 'Testy',
       achternaam: 'Testman',
@@ -18,50 +13,43 @@ describe('POST /api/docenten', () => {
       img: 'https://example.com/testy.jpg'
     };
 
-    const response = await request(app).post('/api/docenten').send(newDocent);
+    // create a new docent
+    let response = await request(app)
+      .post('/api/docenten')
+      .send(newDocent);
 
     expect(response.status).toBe(201);
     expect(response.type).toBe('text/html');
-
     createdDocentId = response.body._id;
 
-    // GET request to verify the newly created docent
-    const getResponse = await request(app).get(`/api/docenten/${createdDocentId}`);
-
-    expect(getResponse.status).toBe(200);
-    expect(getResponse.type).toBe('application/json');
-    expect(getResponse.body.naam).toBe(newDocent.naam);
-    expect(getResponse.body.achternaam).toBe(newDocent.achternaam);
-    expect(getResponse.body.afkorting).toBe(newDocent.afkorting);
-    expect(getResponse.body.email).toBe(newDocent.email);
-    expect(getResponse.body.img).toBe(newDocent.img);
-  });
-
-  test('responds with JSON and retrieves the created docent', async () => {
-    const response = await request(app).get(`/api/docenten/${createdDocentId}`);
+    // retrieve the docent and check if it's correct
+    response = await request(app).get(`/api/docenten/${createdDocentId}`);
 
     expect(response.status).toBe(200);
     expect(response.type).toBe('application/json');
-    expect(response.body.naam).toBe('Testy');
-    expect(response.body.achternaam).toBe('Testman');
-    expect(response.body.afkorting).toBe('TETE');
-    expect(response.body.email).toBe('te.Testman@summacollege.nl');
-    expect(response.body.img).toBe('https://example.com/testy.jpg');
-  });
+    expect(response.body.naam).toBe(newDocent.naam);
+    expect(response.body.achternaam).toBe(newDocent.achternaam);
+    expect(response.body.afkorting).toBe(newDocent.afkorting);
+    expect(response.body.email).toBe(newDocent.email);
+    expect(response.body.img).toBe(newDocent.img);
 
-  test('responds with JSON and updates the created docent', async () => {
-    const response = await request(app).patch(`/api/docenten/${createdDocentId}`).send({ naam: 'Kiwi' });
-  
+    // update the created docent and check if it's correct
+    response = await request(app)
+      .patch(`/api/docenten/${createdDocentId}`)
+      .send({ naam: 'Kiwi' });
+
     expect(response.status).toBe(200);
     expect(response.type).toBe('application/json');
     expect(response.body.naam).toBe('Kiwi');
-  });
-  
-  test('responds with JSON and deletes the created docent', async () => {
-    const response = await request(app).delete(`/api/docenten/${createdDocentId}`);
-  
+
+    // delete the docent 
+    response = await request(app).delete(`/api/docenten/${createdDocentId}`);
+
     expect(response.status).toBe(200);
     expect(response.type).toBe('application/json');
+
+    // check if the docent is deleted, a 404 should pop up
+    response = await request(app).get(`/api/docenten/${createdDocentId}`);
+    expect(response.status).toBe(404);
   });
-  
 });
