@@ -1,44 +1,46 @@
-// * Main api handler
-function fetch_api(i) {
-  const api = `https://pokeapi.co/api/v2/pokemon/${i}/`;
-  const promise = fetch(api);
-  return promise.then((response) => {
-    return response.json();
-  });
-}
+// // * Main api handler
+// function fetch_api(i) {
+//   const api = `https://pokeapi.co/api/v2/pokemon`;
+//   const promise = fetch(api);
+//   return promise.then((response) => {
+//     return response.json();
+//   });
+// }
 
-// * Generate pokemon cards funtion
-function generate_pokemons() {
-  for (let i = 1; i < 10; i++) {
-    let pokemon_card = fetch_api(i);
-    pokemon_card.then((data) => {
-      const card = document.createElement("div");
-      card.classList.add("card");
-      const img = document.createElement("img");
-      img.src = data.sprites.other.dream_world.front_default;
-      const pokemon_name = document.createElement("p");
-      pokemon_name.innerText = data.name;
-      card.appendChild(img);
-      card.appendChild(pokemon_name);
-      const main = document.querySelector(".main");
-      main.appendChild(card);
-    });
-  }
-}
+// // * Generate pokemon cards funtion
+// function generate_pokemons() {
+//   for (let i = 1; i < 10; i++) {
+//     let pokemon_card = fetch_api(i);
+//     pokemon_card.then((data) => {
+//       const card = document.createElement("div");
+//       card.classList.add("card");
+//       const img = document.createElement("img");
+//       img.src = data.sprites.other.dream_world.front_default;
+//       const pokemon_name = document.createElement("p");
+//       pokemon_name.innerText = data.name;
+//       card.appendChild(img);
+//       card.appendChild(pokemon_name);
+//       const main = document.querySelector(".main");
+//       main.appendChild(card);
+//     });
+//   }
+// }
+
+// //*  Generate pokemon cards
+// generate_pokemons();
+
+
+
+// // * Close search results
+// function remove() {
+//   const search_results = document.querySelector(".search_result");
+//   search_results.classList.add("none");
+// }
 
 // * Dark mode
 function enable_dark_mode() {
   document.body.classList.toggle("dark");
 }
-
-// * Close search results
-function remove() {
-  const search_results = document.querySelector(".search_result");
-  search_results.classList.add("none");
-}
-
-//*  Generate pokemon cards
-generate_pokemons();
 
 // * Add teachers
 
