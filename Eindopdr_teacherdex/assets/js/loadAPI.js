@@ -81,29 +81,72 @@ const fetchDocenten = async () => {
 };
 
 const generateCards = async () => {
-  const docenten = await fetchDocenten();
-  const container = document.querySelector(".main");
-  docenten.forEach((docent) => {
-    const card = document.createElement("div");
-    card.classList.add("card");
-
-    const img = document.createElement("img");
-    img.src = docent.img;
-
-    const naam = document.createElement("p");
-    naam.innerText = docent.naam;
-
-    const achternaam = document.createElement("p");
-    achternaam.innerText = docent.achternaam;
-
-    card.appendChild(img);
-    card.appendChild(naam);
-    card.appendChild(achternaam);
-
-    container.appendChild(card);
-  });
-};
-
+    const docenten = await fetchDocenten();
+    const container = document.querySelector(".main");
+    docenten.forEach((docent) => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+  
+      const img = document.createElement("img");
+      img.src = docent.img;
+      img.addEventListener("click", () => {
+        // Show the popup/modal
+        popup.style.display = "block";
+  
+        // Fill the popup/modal with the docent details
+        popupImg.src = docent.img;
+        popupNaam.innerText = docent.naam;
+        popupAchternaam.innerText = docent.achternaam;
+        popupAfkorting.innerText = docent.afkorting;
+        popupEmail.innerText = docent.email;
+        popupKlas.innerText = docent.klas;
+        popupVak.innerText = docent.vak;
+      });
+  
+      const naam = document.createElement("p");
+      naam.innerText = docent.naam;
+  
+      const achternaam = document.createElement("p");
+      achternaam.innerText = docent.achternaam;
+  
+      card.appendChild(img);
+      card.appendChild(naam);
+      card.appendChild(achternaam);
+  
+      // Create the popup/modal and append it to the card
+      const popup = document.createElement("div");
+      popup.classList.add("popup");
+  
+      const popupClose = document.createElement("span");
+      popupClose.classList.add("popup-close");
+      popupClose.innerHTML = "&times;";
+      popupClose.addEventListener("click", () => {
+        // Hide the popup/modal
+        popup.style.display = "none";
+      });
+  
+      const popupImg = document.createElement("img");
+      const popupNaam = document.createElement("p");
+      const popupAchternaam = document.createElement("p");
+      const popupAfkorting = document.createElement("p");
+      const popupEmail = document.createElement("p");
+      const popupKlas = document.createElement("p");
+      const popupVak = document.createElement("p");
+  
+      popup.appendChild(popupClose);
+      popup.appendChild(popupImg);
+      popup.appendChild(popupNaam);
+      popup.appendChild(popupAchternaam);
+      popup.appendChild(popupAfkorting);
+      popup.appendChild(popupEmail);
+      popup.appendChild(popupKlas);
+      popup.appendChild(popupVak);
+  
+      card.appendChild(popup);
+  
+      container.appendChild(card);
+    });
+  };
 generateCards();
 
 
