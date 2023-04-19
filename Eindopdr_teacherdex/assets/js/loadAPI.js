@@ -56,6 +56,17 @@ const fetchDocenten = async () => {
 const generateCards = async () => {
   try {
     const docenten = await fetchDocenten();
+    const klassen = await Promise.all(
+      docenten.map(async (docent) => {
+        return fetchKlas(docent.klasId);
+      })
+    );
+    
+    const vakken = await Promise.all(
+      docenten.map(async (docent) => {
+        return fetchVak(docent.vakId);
+      })
+    );
     const container = document.querySelector(".main");
 
     docenten.forEach((docent) => {
@@ -75,7 +86,7 @@ const generateCards = async () => {
         const popupEmail = card.querySelector(".popup-email");
         const popupKlas = card.querySelector(".popup-klas");
         const popupVak = card.querySelector(".popup-vak");
-        const popupEdit = card.querySelector(".popup-edit");
+
         const popupRemove = card.querySelector(".popup-remove");
         const popupClose = card.querySelector(".popup-close");
         
@@ -88,11 +99,6 @@ const generateCards = async () => {
         popupKlas.innerText = `Klas: ${docent.klasNaam}`;
         popupVak.innerText = `Vak: ${docent.vakNaam}`;
 
-
-        // popupEdit.addEventListener("click", () => {
-        //   // Redirect to edit page with the docent ID as a query parameter
-        //   window.location.href = `edit.html?id=${docent._id}`;
-        // });
 
         popupRemove.addEventListener("click", async () => {
           try {
@@ -164,21 +170,51 @@ const generateCards = async () => {
       popupVak.classList.add("popup-vak");
       popup.appendChild(popupVak);
 
+     
       const closeBtnForm = document.querySelector(".modal-form-popup .closeBtn");
       const modalForm = document.querySelector(".modal-form-popup");
       const editButton = document.createElement("button");
       editButton.classList.add("popup-edit");
       editButton.innerText = "Edit";
       editButton.addEventListener("click", () => {
+        const openModal = async (docentId) => {
+          const docent = await fetchDocenten();
+          const selectedDocent = docent.find((d) => d._id === docentId);
         
-      modalForm.style.display = "block";
+          console.log(klassen, vakken); // add this line to check the values
+          // Set values in the form
+          document.getElementById("naamModal").value = selectedDocent.naam;
+          document.getElementById("achternaamModal").value = selectedDocent.achternaam;
+          document.getElementById("afkortingModal").value = selectedDocent.afkorting;
+          document.getElementById("emailModal").value = selectedDocent.email;
+          document.getElementById("klasModal").innerHTML = klassen
+            .map(
+              (klas) =>
+                `<option value="${klas.id}" ${
+                  klas.id === selectedDocent.klasId ? "selected" : ""
+                }>${klas.naam}</option>`
+            )
+            .join("");
+          document.getElementById("vakModal").innerHTML = vakken
+            .map(
+              (vak) =>
+                `<option value="${vak.id}" ${
+                  vak.id === selectedDocent.vakId ? "selected" : ""
+                }>${vak.naam}</option>`
+            )
+            .join("");
+        };
+        
+        openModal(docent._id);
+        modalForm.style.display = "block";
       });
-
+      
       closeBtnForm.addEventListener("click", () => {
         modalForm.style.display = "none";
       });
       
       popup.appendChild(editButton);
+
 
       const removeButton = document.createElement("button");
       removeButton.classList.add("popup-remove");

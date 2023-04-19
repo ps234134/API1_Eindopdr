@@ -28,6 +28,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         const results = await database.collection('docenten').find(query).sort(sort).toArray()
         res.send(results)
         
+
     })
 
     
@@ -42,8 +43,6 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
        // GET docenten met veld
        // api/docenten?naam=ron&sort=email 
     app.get('/api/docenten', async (req, res) => {
-
-
         const query = { "functie_id" : req.params.id };       
         const sort = 'sort' in req.query  ? {naam : 1} : {}
         const results = await database.collection('docenten').find(query).sort(sort).toArray()
