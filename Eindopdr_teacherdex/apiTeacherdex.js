@@ -6,7 +6,7 @@ app.use(cors("*"));
 const { MongoClient } = require("mongodb");
 const ObjectId = require('mongodb').ObjectId;
 const connectionString = 'mongodb://127.0.0.1:27017/';
-// Import Bunyan and create a logger instance
+// Import Bunyan and create a logger 
 const bunyan = require('bunyan');
 // makes a logging file called teacherDex in the root of the directory
 const log = bunyan.createLogger({ name: 'teacherDex', streams: [{ path: './teacherDex.log' }] });
@@ -53,13 +53,14 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         res.send(results);
       })
 
-        // POST docent
-        app.post('/api/docenten', async (req, res) => {
-            log.info({ endpoint: '/api/docenten', body: req.body }, 'POST request docent received');
-            const results = await database.collection('docenten').insertOne(req.body);
-            if (results.acknowledged) return res.status(201).send("row inserted");
-            res.status(400).end();
-          })   
+      app.post('/api/docenten', async (req, res) => {
+        log.info({ endpoint: '/api/docenten', body: req.body }, 'POST request docent received');
+        const results = await database.collection('docenten').insertOne(req.body);
+        if (results.acknowledged) return res.status(201).send("row inserted");
+        log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'POST request docent failed');
+        res.status(400).end();
+      });
+       
          
       // PATCH docent
       app.patch('/api/docenten/:id', async (req, res) => {
@@ -67,6 +68,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         const query = { "_id" : new ObjectId(req.params.id) };
         const results = await database.collection('docenten').replaceOne(query, req.body);
         if (results.acknowledged) return res.status(200).send("row updated");
+        log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'PATCH request docent failed');
         res.status(400).end();
       });
 
@@ -94,8 +96,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       log.info({ endpoint: '/api/vakken', query: req.query }, 'GET request vakken received');
         const query = 'naam' in req.query  ? {naam : new RegExp(req.query.naam,'i')} : {}
         const sort = 'sort' in req.query  ? {naam : 1} : {}
-        const projection = { _id: 1, naam: 1 } // include only _id and naam fields
-        const results = await database.collection('vakken').find(query).sort(sort).projection(projection).toArray()
+        const results = await database.collection('vakken').find(query).sort(sort).toArray()
         res.send(results)
         
     })
@@ -119,8 +120,8 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       log.info({ endpoint: '/api/klassen', query: req.query }, 'GET request klassen received');
         const query = 'naam' in req.query  ? {naam : new RegExp(req.query.naam,'i')} : {}
         const sort = 'sort' in req.query  ? {naam : 1} : {}
-        const projection = { _id: 1, naam: 1 } // include only _id and naam fields
-        const results = await database.collection('klassen').find(query).sort(sort).project(projection).toArray()
+        
+        const results = await database.collection('klassen').find(query).sort(sort).toArray()
         res.send(results)
         
     })
@@ -145,4 +146,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       })    
     })
    
-.catch(console.error)
+    .catch((error) => {
+      //logging
+      log.error({ err: error }, 'Error request failed');
+    });
