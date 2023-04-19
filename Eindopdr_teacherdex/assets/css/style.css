@@ -321,4 +321,37 @@ nav {
   margin-bottom: 10px;
 }
 
-  
+
+/*klassen css*/
+.container-klas{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.klassen{
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  padding: 10px;
+}
+
+/*vakken css*/
+.container-vak{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.vakken{
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  padding: 10px;
+}

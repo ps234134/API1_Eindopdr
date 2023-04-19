@@ -56,17 +56,6 @@ const fetchDocenten = async () => {
 const generateCards = async () => {
   try {
     const docenten = await fetchDocenten();
-    const klassen = await Promise.all(
-      docenten.map(async (docent) => {
-        return fetchKlas(docent.klasId);
-      })
-    );
-    
-    const vakken = await Promise.all(
-      docenten.map(async (docent) => {
-        return fetchVak(docent.vakId);
-      })
-    );
     const container = document.querySelector(".main");
 
     docenten.forEach((docent) => {
@@ -170,7 +159,6 @@ const generateCards = async () => {
       popupVak.classList.add("popup-vak");
       popup.appendChild(popupVak);
 
-     
       const closeBtnForm = document.querySelector(".modal-form-popup .closeBtn");
       const modalForm = document.querySelector(".modal-form-popup");
       const editButton = document.createElement("button");
@@ -178,20 +166,28 @@ const generateCards = async () => {
       editButton.innerText = "Edit";
       editButton.addEventListener("click", () => {
         const openModal = async (docentId) => {
-          const docent = await fetchDocenten();
-          const selectedDocent = docent.find((d) => d._id === docentId);
-        
-          console.log(klassen, vakken); // add this line to check the values
+          // Fetch docent data
+          const response = await fetch(`${api.docenten}/${docentId}`);
+          const docent = await response.json();
+      
+          // Fetch klas data for dropdown
+          const klasResponse = await fetch(api.klassen);
+          const klassen = await klasResponse.json();
+      
+          // Fetch vak data for dropdown
+          const vakResponse = await fetch(api.vakken);
+          const vakken = await vakResponse.json();
+      
           // Set values in the form
-          document.getElementById("naamModal").value = selectedDocent.naam;
-          document.getElementById("achternaamModal").value = selectedDocent.achternaam;
-          document.getElementById("afkortingModal").value = selectedDocent.afkorting;
-          document.getElementById("emailModal").value = selectedDocent.email;
+          document.getElementById("naamModal").value = docent.naam;
+          document.getElementById("achternaamModal").value = docent.achternaam;
+          document.getElementById("afkortingModal").value = docent.afkorting;
+          document.getElementById("emailModal").value = docent.email;
           document.getElementById("klasModal").innerHTML = klassen
             .map(
               (klas) =>
                 `<option value="${klas.id}" ${
-                  klas.id === selectedDocent.klasId ? "selected" : ""
+                  klas.id === docent.klasId ? "selected" : ""
                 }>${klas.naam}</option>`
             )
             .join("");
@@ -199,10 +195,11 @@ const generateCards = async () => {
             .map(
               (vak) =>
                 `<option value="${vak.id}" ${
-                  vak.id === selectedDocent.vakId ? "selected" : ""
+                  vak.id === docent.vakId ? "selected" : ""
                 }>${vak.naam}</option>`
             )
             .join("");
+      
         };
         
         openModal(docent._id);
