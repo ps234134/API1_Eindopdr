@@ -1,73 +1,5 @@
-// "use strict"
-// const apiBasis = "http://127.0.0.1:8081/api/"
-// const apiDocenten = apiBasis + "docenten/"
-// const apiFuncties = apiBasis + "functies/"
 
-// let functies = []
-// let json = null
-
-// const laadFuncties = async () => {
-//     const response = await axios.get(apiFuncties)
-//     const json = await response.data
-//     let nieuweInhoud = ''
-//     json.map(el => {
-//         functies[el._id] = el.naam
-//         nieuweInhoud += `<option value="${el._id}">${el.naam}</option>`
-//     })
-//     document.querySelector("#functie").innerHTML = nieuweInhoud
-//     console.log(functies)
-// }
-
-// //		const laadWerknemers = async () => {
-// //			console.log('Laad gegevens')
-// //            const response = await axios.get(apiWerknemers)
-// //            json = await response.data
-// //		}
-
-// const laadFunctieWerknemers = async () => {
-//     const functie  = document.querySelector("#functie").value
-//     console.log('selecteer Functie ', functie)
-//     const apiFunctiesWerknemers = `${apiFuncties}${functie}/werknemers?sort=naam`
-//     const response = await axios.get(apiFunctiesWerknemers)
-//     json = await response.data
-//     toon()
-// }
-
-// const toon = () => {
-//     let tabelInhoud = ''
-//     json.map(el => tabelInhoud += `<tr><td>${el.naam}</td><td>${el.telefoon}</td><td>${el.email}</td>
-//                         <td>${functies[el.functie_id]}</td><td onclick="verwijder('${el._id}')"> x </td></tr>`)
-//     document.querySelector("#tabelInhoud").innerHTML = tabelInhoud
-// }
-
-// const laad = async () => {
-//     await laadFuncties()
-//     await laadFunctieWerknemers()
-//     toon()
-// }
-
-// const voegToe = async () => {
-//     const naam     = document.querySelector("#naam").value
-//     const telefoon = document.querySelector("#telefoon").value
-//     const email    = document.querySelector("#email").value
-//     const functie  = document.querySelector("#functie").value
-//     const jsonstring = {"naam":naam, "telefoon":telefoon, "email":email, "functie_id":functie}
-//     console.log("voeg toe: ",jsonstring)
-//     const respons = await axios.post(apiWerknemers, jsonstring, {headers: {'Content-Type': 'application/json'}})
-//     console.log('status code', respons.status)
-//     document.querySelector("#naam").value = ''
-//     document.querySelector("#telefoon").value = ''
-//     document.querySelector("#email").value = ''
-//     await laad()
-// }
-
-// const verwijder = async (id) => {
-//     console.log("verwijder: ",id)
-//     const respons = await axios.delete(apiWerknemers+id)
-//     console.log('status code', respons.status)
-//     await laad()
-// }
-
+"use strict"
 // Main api handler
 const api = {
   docenten: "http://127.0.0.1:8081/api/docenten",
@@ -146,6 +78,7 @@ const generateCards = async () => {
         const popupEdit = card.querySelector(".popup-edit");
         const popupRemove = card.querySelector(".popup-remove");
         const popupClose = card.querySelector(".popup-close");
+        
 
         popupImg.src = docent.img;
         popupNaam.innerText = `Naam: ${docent.naam}`;
@@ -154,10 +87,13 @@ const generateCards = async () => {
         popupEmail.innerText = `Email: ${docent.email}`;
         popupKlas.innerText = `Klas: ${docent.klasNaam}`;
         popupVak.innerText = `Vak: ${docent.vakNaam}`;
-        popupEdit.addEventListener("click", () => {
-          // Redirect to edit page with the docent ID as a query parameter
-          window.location.href = `edit.html?id=${docent._id}`;
-        });
+
+
+        // popupEdit.addEventListener("click", () => {
+        //   // Redirect to edit page with the docent ID as a query parameter
+        //   window.location.href = `edit.html?id=${docent._id}`;
+        // });
+
         popupRemove.addEventListener("click", async () => {
           try {
             const response = await fetch(`${api.docenten}/${docent._id}`, {
@@ -228,36 +164,20 @@ const generateCards = async () => {
       popupVak.classList.add("popup-vak");
       popup.appendChild(popupVak);
 
+      const closeBtnForm = document.querySelector(".modal-form-popup .closeBtn");
+      const modalForm = document.querySelector(".modal-form-popup");
       const editButton = document.createElement("button");
       editButton.classList.add("popup-edit");
       editButton.innerText = "Edit";
       editButton.addEventListener("click", () => {
-        const naam = prompt("Enter the new name:");
-        const achternaam = prompt("Enter the new last name:");
-        const email = prompt("Enter the new email:");
-        const klasNaam = prompt("Enter the new class:");
-        const vakNaam = prompt("Enter the new course:");
-
-        const data = {
-          naam,
-          achternaam,
-          email,
-          klasNaam,
-          vakNaam,
-        };
-
-        fetch(`/api/docenten/${docent._id}`, {
-          method: "PATCH",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" },
-        })
-          .then((res) => res.text())
-          .then((data) => {
-            console.log(data);
-            location.reload();
-          })
-          .catch((error) => console.log(error));
+        
+      modalForm.style.display = "block";
       });
+
+      closeBtnForm.addEventListener("click", () => {
+        modalForm.style.display = "none";
+      });
+      
       popup.appendChild(editButton);
 
       const removeButton = document.createElement("button");

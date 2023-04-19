@@ -262,3 +262,61 @@ nav {
   .popup-close:hover {
 	color: #000;
   }
+
+  /*modal form*/
+
+  .modal-form-popup {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 15px;
+    border: 1px solid #ccc;
+    z-index: 9;
+    background-color: #f1f1f1;
+    max-width: 500px;
+    padding: 20px;
+  }
+
+  .modal-form-container input[type=text], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+  }
+  
+  .modal-form-container input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .modal-form-container input[type=submit]:hover {
+    background-color: #45a049;
+  }
+  
+  .modal-form-container .closeBtn {
+    color: #000;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .modal-form-container .closeBtn:hover,
+  .modal-form-container .closeBtn:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .modal-form-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  
