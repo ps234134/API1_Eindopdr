@@ -1,1 +1,36 @@
-[    {        "naam": "MAD1"    },    {        "naam": "API1"    },    {        "naam": "KDK"    },    {        "naam": "Mentoruur"    },    {        "naam": "Communicatie 6"    },    {        "naam": "Lezen"    },    {        "naam": "VBPV"    }]
+[{
+  "_id": {
+    "$oid": "642548c3e7853cb5d2bdc1c2"
+  },
+  "naam": "MAD1"
+},{
+  "_id": {
+    "$oid": "642548c3e7853cb5d2bdc1c3"
+  },
+  "naam": "API1"
+},{
+  "_id": {
+    "$oid": "642548c3e7853cb5d2bdc1c4"
+  },
+  "naam": "KDK"
+},{
+  "_id": {
+    "$oid": "642548c3e7853cb5d2bdc1c5"
+  },
+  "naam": "Mentoruur"
+},{
+  "_id": {
+    "$oid": "642548c3e7853cb5d2bdc1c6"
+  },
+  "naam": "Communicatie 6"
+},{
+  "_id": {
+    "$oid": "642548c3e7853cb5d2bdc1c7"
+  },
+  "naam": "Lezen"
+},{
+  "_id": {
+    "$oid": "642548c3e7853cb5d2bdc1c8"
+  },
+  "naam": "VBPV"
+}]
