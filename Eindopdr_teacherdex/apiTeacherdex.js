@@ -6,6 +6,8 @@ app.use(cors("*"));
 const { MongoClient } = require("mongodb");
 const ObjectId = require('mongodb').ObjectId;
 const connectionString = 'mongodb://127.0.0.1:27017/';
+//Import Bcrypt for encryption
+const bcrypt = require('bcrypt');
 // Import Bunyan and create a logger 
 const bunyan = require('bunyan');
 // makes a logging file called teacherDex in the root of the directory
@@ -21,7 +23,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     app.get('/', (req, res) => {
         res.send('zie document endpoints');
     })
-    //----LOGIN---
+    //----REGISTER---
 
     app.post('/api/register', async (req, res) => {
       const { naam, email, wachtwoord } = req.body;
