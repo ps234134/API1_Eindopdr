@@ -21,6 +21,44 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     app.get('/', (req, res) => {
         res.send('zie document endpoints');
     })
+    //----LOGIN---
+
+    app.post('/api/register', async (req, res) => {
+      const { naam, email, wachtwoord } = req.body;
+    
+      try {
+        // Check if the email is already registered
+        const existingUser = await database.collection('gebruikers').findOne({ email });
+        if (existingUser) {
+          return res.status(409).json({ error: 'Email is already registered' });
+        }
+    
+        // Hash the password before storing it to the database
+        // 5 is the number of "salts" making the encryption stronger
+        const hashedPassword = await bcrypt.hash(wachtwoord, 5);
+    
+        // Create a new user object
+        const newUser = {
+          naam,
+          email,
+          wachtwoord: hashedPassword,
+          accessToken: null
+        };
+    
+        // Insert the new user into the gebruikers collection
+        const result = await database.collection('gebruikers').insertOne(newUser);
+    
+        // Check if the user was successfully registered
+        if (result.acknowledged) {
+          return res.status(201).json({ message: 'User registered successfully' });
+        } else {
+          return res.status(500).json({ error: 'Failed to register user' });
+        }
+      } catch (error) {
+        return res.status(500).json({ error: 'An error occurred during registration' });
+      }
+    });
+    
 
     //---- DOCENTEN-----
 
