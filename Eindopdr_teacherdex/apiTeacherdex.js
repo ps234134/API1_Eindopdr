@@ -61,6 +61,39 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       }
     });
     
+    //---LOGIN---
+
+    app.post('/api/login', async (req, res) => {
+      const { email, wachtwoord } = req.body;
+    
+      // Retrieve the user document from the database based on the email
+      const user = await database.collection('gebruikers').findOne({ email });
+    
+      if (!user) {
+        return res.status(401).send('Invalid email');
+      }
+    
+      //compare the given password with the encrypted password in the db
+      const isPasswordValid = await bcrypt.compare(wachtwoord, user.wachtwoord);
+    
+      if (!isPasswordValid) {
+        return res.status(401).send('Invalid  password');
+      }
+    
+      // TOKEN GENERATION STILL NEEDS TO BE IMPLEMENTED
+      // Generate a new access token (you can use any token generation mechanism here ST)
+      const accessToken = generateAccessToken(user);
+    
+      // Update the user document with the new access token according to the email
+      await database.collection('gebruikers').updateOne(
+        { email },
+        { $set: { accestoken: accessToken } }
+      );
+    
+      // Return the access token to the client
+      res.send({ accessToken });
+    });
+    
 
     //---- DOCENTEN-----
 
