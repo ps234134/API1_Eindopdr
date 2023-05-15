@@ -2,10 +2,11 @@ const jwt = require('jsonwebtoken');
 const secretKey = 'Kinga_Tutai'; // Replace with your secret key
 
 // Function to generate a JWT access token
-function generateAccessToken(user) {
+function generateAccessToken(email) {
   const payload = {
-    userId: user._id, // Include any user data you want to store in the token
+    userId: email._id, // Include any user data you want to store in the token
     // Add any additional claims or data to the payload if needed
+
   };
 
   const options = {

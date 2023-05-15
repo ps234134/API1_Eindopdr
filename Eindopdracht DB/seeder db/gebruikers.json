@@ -3,13 +3,13 @@
     "naam": "John Doe",
     "email": "john@example.com",
     "wachtwoord": ".",
-    "accestoken": "."
+    "accesstoken": "."
   },
   {
     "naam": "Jane Smith",
     "email": "jane@example.com",
     "wachtwoord": ".",
-    "accestoken": "."
+    "accesstoken": "."
   }
 ]
 
