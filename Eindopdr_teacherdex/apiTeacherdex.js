@@ -6,13 +6,18 @@ app.use(cors("*"));
 const { MongoClient } = require("mongodb");
 const ObjectId = require('mongodb').ObjectId;
 const connectionString = 'mongodb://127.0.0.1:27017/';
+
+//--- LIBRARIES ----
+// Import JsonWebToken for Token generation
+const jwt = require('jsonwebtoken');
+const secretKey = 'Tutai_Kinga';
 //Import Bcrypt for encryption
 const bcrypt = require('bcrypt');
 // Import Bunyan and create a logger 
 const bunyan = require('bunyan');
+
 // makes a logging file called teacherDex in the root of the directory
 const log = bunyan.createLogger({ name: 'teacherDex', streams: [{ path: './teacherDex.log' }] });
-
 // export file as app for testing, see feature.test.js
 module.exports = app;
 
