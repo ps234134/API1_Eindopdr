@@ -1,3 +1,21 @@
-[
-    {"naam": "SD2A"}, {"naam": "SD2B"}, {"naam": "SD2C"}, {"naam": "SD2D"}
-]
+[{
+  "_id": {
+    "$oid": "642548b5e7853cb5d2bdc1bd"
+  },
+  "naam": "SD2A"
+},{
+  "_id": {
+    "$oid": "642548b5e7853cb5d2bdc1be"
+  },
+  "naam": "SD2B"
+},{
+  "_id": {
+    "$oid": "642548b5e7853cb5d2bdc1bf"
+  },
+  "naam": "SD2C"
+},{
+  "_id": {
+    "$oid": "642548b5e7853cb5d2bdc1c0"
+  },
+  "naam": "SD2D"
+}]

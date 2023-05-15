@@ -6,6 +6,7 @@ app.use(cors("*"));
 const { MongoClient } = require("mongodb");
 const ObjectId = require('mongodb').ObjectId;
 const connectionString = 'mongodb://127.0.0.1:27017/';
+const { generateAccessToken } = require('./tokenGeneration');
 
 
 //--- LIBRARIES ----
@@ -40,6 +41,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         if (existingUser) {
           return res.status(409).json({ error: 'Email is already registered' });
         }
+        log.info({ endpoint: '/api/register', email }, 'User registered');
     
         // Hash the password before storing it to the database
         // 5 is the number of "salts" making the encryption stronger
@@ -50,7 +52,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
           naam,
           email,
           wachtwoord: hashedPassword,
-          accessToken: null
+          accesstoken: null
         };
     
         // Insert the new user into the gebruikers collection
@@ -74,10 +76,11 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     
       // Retrieve the user document from the database based on the email
       const user = await database.collection('gebruikers').findOne({ email });
-    
+      log.info({ endpoint: '/api/login', email }, 'User logged in');
       if (!user) {
         return res.status(401).send('Invalid email');
       }
+      log.info({ endpoint: '/api/login', email }, 'User logged in');
     
       //compare the given password with the encrypted password in the db
       const isPasswordValid = await bcrypt.compare(wachtwoord, user.wachtwoord);
@@ -85,15 +88,15 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       if (!isPasswordValid) {
         return res.status(401).send('Invalid  password');
       }
-    
+      log.info({ endpoint: '/api/login', email }, 'User logged in');
       // TOKEN GENERATION STILL NEEDS TO BE IMPLEMENTED
       // Generate a new access token (you can use any token generation mechanism here ST)
       const accessToken = generateAccessToken(user);
-    
+      log.info({ endpoint: '/api/login', email, accessToken }, 'User logged in');
       // Update the user document with the new access token according to the email
       await database.collection('gebruikers').updateOne(
         { email },
-        { $set: { accestoken: accessToken } }
+        { $set: { accesstoken: accessToken } }
       );
     
       // Return the access token to the client

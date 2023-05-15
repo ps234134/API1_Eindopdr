@@ -15,14 +15,14 @@ const bcrypt = require('bcrypt');
 const bunyan = require('bunyan');
 
 // makes a logging file called RegisterLogin in the root of the directory
-const log = bunyan.createLogger({ name: 'RegisterLogin', streams: [{ path: './teacherDex.log' }] });
+const log = bunyan.createLogger({ name: 'RegisterLogin', streams: [{ path: './RegisterLogin.log' }] });
 // export file as app for testing, see feature.test.js
 module.exports = app;
 
 MongoClient.connect(connectionString, { useUnifiedTopology: true })
   .then(client => {
     const database = client.db('teacherDex')
-    app.get('/', (req, res) => {
+    app.get('/', (req, res) => {  
       res.send('zie document endpoints');
     });
 
@@ -47,11 +47,12 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
           naam,
           email,
           wachtwoord: hashedPassword,
-          accessToken: null
+          accesstoken: null
         };
 
         // Insert the new user into the gebruikers collection
         const result = await database.collection('gebruikers').insertOne(newUser);
+        log.info(`User ${newUser.email} registered`);
 
         // Check if the user was successfully registered
         if (result.acknowledged) {
@@ -61,6 +62,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         }
       } catch (error) {
         return res.status(500).json({ error: 'An error occurred during registration' });
+
       }
     });
 
@@ -71,10 +73,12 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
       // Retrieve the user document from the database based on the email
       const user = await database.collection('gebruikers').findOne({ email });
+      log.info(`User ${user} is trying to log in`);
 
       if (!user) {
         return res.status(401).send('Invalid email');
       }
+      log.info(`User ${user} is trying to log in with an invalid email`);
 
       // Compare the given password with the encrypted password in the db
       const isPasswordValid = await bcrypt.compare(wachtwoord, user.wachtwoord);
@@ -82,18 +86,20 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       if (!isPasswordValid) {
         return res.status(401).send('Invalid password');
       }
-
+      log.info(`User ${user} is trying to log in with an invalid password`);
       // Generate a new access token
       const accessToken = generateAccessToken(user);
+      log.info(`User ${user.email} logged in`);
 
       // Update the user document with the new access token according to the email
       await database.collection('gebruikers').updateOne(
         { email },
-        { $set: { accessToken: accessToken } }
+        { $set: { accesstoken: accessToken } }
       );
 
       // Return the access token to the client
-      res.send({ accessToken });
+      res.send({ accesstoken });
+    
     });
 
 })
