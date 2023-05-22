@@ -6,7 +6,7 @@ app.use(cors("*"));
 const { MongoClient } = require("mongodb");
 const ObjectId = require('mongodb').ObjectId;
 const connectionString = 'mongodb://127.0.0.1:27017/';
-const { generateAccessToken } = require('./tokenGeneration');
+const { generateAccessToken, deleteAccessToken } = require('./tokenGeneration');
 
 
 //--- LIBRARIES ----
@@ -89,11 +89,11 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         return res.status(401).send('Invalid  password');
       }
       log.info({ endpoint: '/api/login', email }, 'User logged in');
-      // TOKEN GENERATION STILL NEEDS TO BE IMPLEMENTED
-      // Generate a new access token (you can use any token generation mechanism here ST)
+ 
+      // Generate a new access token
       const accessToken = generateAccessToken(user);
       log.info({ endpoint: '/api/login', email, accessToken }, 'User logged in');
-      // Update the user document with the new access token according to the email
+      // Update the user  with the new access token according to the found email
       await database.collection('gebruikers').updateOne(
         { email },
         { $set: { accesstoken: accessToken } }
@@ -139,6 +139,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     
       const result = await database.collection('docenten').deleteOne(query);
       if (result.acknowledged) {
+        deleteAccessToken(accessToken);
         return res.status(200).send("Docent verwijderd");
       } else {
         log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent NOT received'); 
@@ -192,6 +193,8 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
         const query = { "_id" : new ObjectId(req.params.id) };
         const results = await database.collection('docenten').replaceOne(query, req.body);
+        
+
         if (results.acknowledged) return res.status(200).send("row updated");
         log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'PATCH request docent failed');
         res.status(400).end();

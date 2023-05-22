@@ -91,7 +91,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       const accessToken = generateAccessToken(user);
       log.info(`User ${user.email} logged in`);
 
-      // Update the user document with the new access token according to the email
+      // Update the user document with the new access token according to the found email
       await database.collection('gebruikers').updateOne(
         { email },
         { $set: { accesstoken: accessToken } }
