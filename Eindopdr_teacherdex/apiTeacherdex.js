@@ -104,14 +104,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     });
     
     //---LOGOUT---                                                                    
-    function verifyAccessToken(token) {
-      try {
-        const decoded = jwt.verify(token, secretKey);
-        return decoded;
-      } catch (error) {
-        return null;
-      }
-    }
+  
     
     app.patch('/api/docenten/:id', async (req, res) => {
       log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
