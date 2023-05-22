@@ -16,6 +16,16 @@ function generateAccessToken(email) {
   return jwt.sign(payload, secretKey, options);
 }
 
+function verifyAccessToken(token) {
+    try {
+      const decoded = jwt.verify(token, secretKey);
+      return decoded;
+    } catch (error) {
+      return null;
+    }
+  }
+
 module.exports = {
-  generateAccessToken,
+  generateAccessToken, verifyAccessToken
 };
+

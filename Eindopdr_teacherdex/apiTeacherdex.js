@@ -103,15 +103,9 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       res.send({ accessToken });
     });
     
-    //---LOGOUT---                                                                    
-    function verifyAccessToken(token) {
-      try {
-        const decoded = jwt.verify(token, secretKey);
-        return decoded;
-      } catch (error) {
-        return null;
-      }
-    }
+    //---LOGOUT---     
+    // code to delete token here                                                               
+    
     
     app.patch('/api/docenten/:id', async (req, res) => {
       log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
@@ -199,6 +193,8 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
         const query = { "_id" : new ObjectId(req.params.id) };
         const results = await database.collection('docenten').replaceOne(query, req.body);
+        
+
         if (results.acknowledged) return res.status(200).send("row updated");
         log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'PATCH request docent failed');
         res.status(400).end();
