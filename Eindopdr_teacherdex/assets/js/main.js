@@ -92,4 +92,32 @@ form.addEventListener("submit", (event) => {
     });
 });
 
+// login
 
+// Add this JavaScript code to your existing main.js file or create a new one
+document.getElementById("loginBtn").addEventListener("click", function() {
+  document.getElementById("classLogin").style.display = "block";
+});
+
+document.getElementsByClassName("close")[0].addEventListener("click", function() {
+  document.getElementById("classLogin").style.display = "none";
+});
+
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+  // Add your login form submission logic here
+});
+
+document.getElementById("registerBtn").addEventListener("click", function() {
+  document.getElementById("classRegister").style.display = "block";
+});
+
+
+document.getElementsByClassName("closeRegister")[0].addEventListener("click", function() {
+  document.getElementById("classRegister").style.display = "none";
+});
+
+document.getElementById("registerForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+  // Add your login form submission logic here
+});
