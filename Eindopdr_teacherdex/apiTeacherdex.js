@@ -118,13 +118,13 @@ app.post('/api/login', async (req, res) => {
         let bearer = req.headers['authorization'].split(' ')[1];
         console.log(bearer);
 
-        const Token =await  refreshAccessToken(database, email, bearer);
+        await  verifyAccessToken(bearer);
         console.log('test5');
-        console.log(Token);
-        log.info({ endpoint: '/api/docenten', Token }, 'User logged out');
+        console.log(bearer);
+        log.info({ endpoint: '/api/docenten', bearer }, 'User logged out');
     
         // Delete the access token from the database
-        deleteAccessToken(database, Token);
+        deleteAccessToken(database, bearer);
         log.info({ endpoint: '/api/docenten', Token }, 'User logged out');
     
         return res.status(200).json({ message: 'User logged out successfully' });

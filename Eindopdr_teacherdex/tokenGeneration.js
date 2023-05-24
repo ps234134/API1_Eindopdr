@@ -1,4 +1,3 @@
-const { json } = require('express');
 const jwt = require('jsonwebtoken');
 const secretKey = 'Kinga_Tutai'; // Replace with your secret key
 
@@ -7,13 +6,13 @@ function generateAccessToken(email) {
   const payload = {
     userId: email._id, 
      // Set the token expiration time (30 seconds from the current time)
-     expiresAt: Math.floor(Date.now() / 1000) + 120, 
+     expiresAt: Math.floor(Date.now() / 1000) + 30, 
 
   };
 
   const options = {
     // Set the token expiration time (30 seconds)
-    expiresIn: '120s', 
+    expiresIn: '30s', 
   };
 
   return jwt.sign(payload, secretKey, options);
@@ -30,20 +29,19 @@ function verifyAccessToken(token) {
 }
 
 // verifies and refreshes the token if properly verified
-async function refreshAccessToken(database, email, oldToken) {
+async function refreshAccessToken(database,oldToken) {
   // Verify the old token, if not correct it throws an error and ceases the rest of the function of refresh AccesToken
   const decodedToken = verifyAccessToken(oldToken);
   if (!decodedToken) {
-    console.log('Invalid or expired access token');
     throw new Error('Invalid or expired access token');
   }
  // generates the new token
   const newToken = generateAccessToken(email);
-console.log('new token: ' + newToken);
+
   try {
     // Checks if the email and the old token in the db match, then updates the old token
-    const collection = database.collection('gebruikers');
-    const result = await collection.updateOne(
+   
+    const result = await database.updateOne(
       { email: email, accesstoken: oldToken },
       { $set: { accesstoken: newToken } }
     );
@@ -51,7 +49,6 @@ console.log('new token: ' + newToken);
     if (result.modifiedCount === 1) {
       return newToken;
     } else {
-      console.log('Failed to update access token');
       throw new Error('Failed to update access token');
     }
   } catch (error) {
@@ -61,20 +58,17 @@ console.log('new token: ' + newToken);
 
 
 //deletes the access token from the database
-async function deleteAccessToken(database, accessToken) {
+async function deleteAccessToken(database,accessToken) {
   try {
-    const client = await MongoClient.connect('mongodb://localhost:27017');
-    const db = client.db('teacherDex');
-    const collection = db.collection('gebruikers');
 
     // Delete the matching  access token
-    const query = { accessToken: accessToken };
-    const result = await collection.deleteOne(query);
+    const query = { accesstoken: accessToken };
+    const result = await database.deleteOne(query);
 
     if (result.deletedCount === 1) {
-      json({ message: 'Access token deleted' });
+      console.log('Access token deleted successfully');
     } else {
-      json({ message: 'Access token not found' });
+      console.log('Access token not found');
     }
 
     client.close();
@@ -91,6 +85,3 @@ module.exports = {
 };
 
 
-//TO-DO
-//- stuur oud token en emaik mee als identifier als je de token wilt gebruiken ipv user
-//- roep refresh token bij iedere request aan om de token te vernieuwen
