@@ -41,7 +41,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         if (existingUser) {
           return res.status(409).json({ error: 'Email is already registered' });
         }
-        log.info({ endpoint: '/api/register', email }, 'User registered');
+       
     
         // Hash the password before storing it to the database
         // 5 is the number of "salts" making the encryption stronger
@@ -60,9 +60,11 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     
         // Check if the user was successfully registered
         if (result.acknowledged) {
+          log.info({ endpoint: '/api/register', email }, 'User registered');
           return res.status(201).json({ message: 'User registered successfully' });
 
         } else {
+          log.error({ endpoint: '/api/register', email }, 'User registration failed');
           return res.status(500).json({ error: 'Failed to register user' });
         }
       } catch (error) {
