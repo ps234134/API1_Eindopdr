@@ -1,3 +1,4 @@
+const { json } = require('express');
 const jwt = require('jsonwebtoken');
 const secretKey = 'Kinga_Tutai'; // Replace with your secret key
 
@@ -69,9 +70,9 @@ async function deleteAccessToken(accessToken) {
     const result = await collection.deleteOne(query);
 
     if (result.deletedCount === 1) {
-      console.log('Access token deleted successfully');
+      json({ message: 'Access token deleted' });
     } else {
-      console.log('Access token not found');
+      json({ message: 'Access token not found' });
     }
 
     client.close();
