@@ -46,14 +46,13 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         // Hash the password before storing it to the database
         // 5 is the number of "salts" making the encryption stronger
         const hashedPassword = await bcrypt.hash(wachtwoord, 5);
-        //generates a token
-        const accessToken = generateAccessToken(user);
+  
         // Create a new user object
         const newUser = {
           naam,
           email,
           wachtwoord: hashedPassword,
-          accesstoken: accessToken
+          accesstoken: null
         };
     
         // Insert the new user into the gebruikers collection
@@ -114,12 +113,9 @@ app.post('/api/login', async (req, res) => {
       log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
       const query = { "_id" : new ObjectId(req.params.id) };
     
-      // Generate a new access token and verifies it
+      // verifies old token and generates a new one if verified
       const accessToken = refreshAccessToken(email, accessToken)
-      const decoded = verifyAccessToken(accessToken);
-      if (!decoded || decoded.email !== user.email) {
-        return res.status(401).send('Unauthorized');
-      }
+     
     
       const results = await database.collection('docenten').replaceOne(query, req.body);
       if (results.acknowledged) {
@@ -136,10 +132,7 @@ app.post('/api/login', async (req, res) => {
     
      // Generate a new access token and verifies it
      const accessToken = refreshAccessToken(email, accessToken)
-     const decoded = verifyAccessToken(accessToken);
-     if (!decoded || decoded.email !== user.email) {
-       return res.status(401).send('Unauthorized');
-     }
+   
     
       const result = await database.collection('docenten').deleteOne(query);
       if (result.acknowledged) {
