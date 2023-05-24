@@ -6,7 +6,7 @@ app.use(cors("*"));
 const { MongoClient } = require("mongodb");
 const ObjectId = require('mongodb').ObjectId;
 const connectionString = 'mongodb://127.0.0.1:27017/';
-const { generateAccessToken, deleteAccessToken } = require('./tokenGeneration');
+const { generateAccessToken, deleteAccessToken, verifyAccessToken, refreshAccessToken } = require('./tokenGeneration');
 
 
 //--- LIBRARIES ----
@@ -46,13 +46,14 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         // Hash the password before storing it to the database
         // 5 is the number of "salts" making the encryption stronger
         const hashedPassword = await bcrypt.hash(wachtwoord, 5);
-    
+        //generates a token
+        const accessToken = generateAccessToken(user);
         // Create a new user object
         const newUser = {
           naam,
           email,
           wachtwoord: hashedPassword,
-          accesstoken: null
+          accesstoken: accessToken
         };
     
         // Insert the new user into the gebruikers collection
@@ -69,39 +70,42 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       }
     });
     
-    //---LOGIN---
+   //---LOGIN---
 
-    app.post('/api/login', async (req, res) => {
-      const { email, wachtwoord } = req.body;
-    
-      // Retrieve the user document from the database based on the email
-      const user = await database.collection('gebruikers').findOne({ email });
-      log.info({ endpoint: '/api/login', email }, 'User logged in');
-      if (!user) {
-        return res.status(401).send('Invalid email');
-      }
-      log.info({ endpoint: '/api/login', email }, 'User logged in');
-    
-      //compare the given password with the encrypted password in the db
-      const isPasswordValid = await bcrypt.compare(wachtwoord, user.wachtwoord);
-    
-      if (!isPasswordValid) {
-        return res.status(401).send('Invalid  password');
-      }
-      log.info({ endpoint: '/api/login', email }, 'User logged in');
- 
-      // Generate a new access token
-      const accessToken = generateAccessToken(user);
-      log.info({ endpoint: '/api/login', email, accessToken }, 'User logged in');
-      // Update the user  with the new access token according to the found email
-      await database.collection('gebruikers').updateOne(
-        { email },
-        { $set: { accesstoken: accessToken } }
-      );
-    
-      // Return the access token to the client
-      res.send({ accessToken });
-    });
+app.post('/api/login', async (req, res) => {
+  const { email, wachtwoord } = req.body;
+
+  try {
+    // Retrieve the user document from the database based on the email
+    const user = await database.collection('gebruikers').findOne({ email });
+    log.info({ endpoint: '/api/login', email }, 'User login attempt');
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Compare the given password with the encrypted password in the database
+    const isPasswordValid = await bcrypt.compare(wachtwoord, user.wachtwoord);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Generate a new access token and update the user with the new access token
+    const accessToken = generateAccessToken(email);
+    await database.collection('gebruikers').updateOne(
+      { email },
+      { $set: { accesstoken: accessToken } }
+    );
+
+    log.info({ endpoint: '/api/login', email, accessToken }, 'User logged in');
+
+    // Return the access token to the client
+    return res.status(200).json({ accessToken });
+  } catch (error) {
+    return res.status(500).json({ error: 'An error occurred during login' });
+  }
+});
     
     //---LOGOUT---                                                                    
   
@@ -110,8 +114,8 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
       const query = { "_id" : new ObjectId(req.params.id) };
     
-      // Verify access token
-      const accessToken = req.headers.authorization;
+      // Generate a new access token and verifies it
+      const accessToken = refreshAccessToken(email, accessToken)
       const decoded = verifyAccessToken(accessToken);
       if (!decoded || decoded.email !== user.email) {
         return res.status(401).send('Unauthorized');
@@ -130,12 +134,12 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent received');
       const query = { "_id" : new ObjectId(req.params.id) };
     
-      // Verify access token
-      const accessToken = req.headers.authorization;
-      const decoded = verifyAccessToken(accessToken);
-      if (!decoded || decoded.email !== user.email) {
-        return res.status(401).send('Unauthorized');
-      }
+     // Generate a new access token and verifies it
+     const accessToken = refreshAccessToken(email, accessToken)
+     const decoded = verifyAccessToken(accessToken);
+     if (!decoded || decoded.email !== user.email) {
+       return res.status(401).send('Unauthorized');
+     }
     
       const result = await database.collection('docenten').deleteOne(query);
       if (result.acknowledged) {
@@ -157,10 +161,8 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         const results = await database.collection('docenten').find(query).sort(sort).toArray();
         res.send(results);
         
-
     })
 
-    
         // GET docent
     app.get('/api/docenten/:id', async (req, res) => {
         const query = { "_id" : new ObjectId(req.params.id) };
