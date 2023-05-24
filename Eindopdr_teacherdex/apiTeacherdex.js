@@ -46,14 +46,13 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         // Hash the password before storing it to the database
         // 5 is the number of "salts" making the encryption stronger
         const hashedPassword = await bcrypt.hash(wachtwoord, 5);
-        //generates a token
-       
+  
         // Create a new user object
         const newUser = {
           naam,
           email,
           wachtwoord: hashedPassword,
-          accesstoken: null,
+          accesstoken: null
         };
     
         // Insert the new user into the gebruikers collection
