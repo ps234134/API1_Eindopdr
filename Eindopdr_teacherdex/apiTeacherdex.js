@@ -107,12 +107,16 @@ app.post('/api/login', async (req, res) => {
 });
     
     //---LOGOUT---                                                                    
-  
+   
+    app.post('/api/logout', async (req, res) => {
+      try {
+        const Token = refreshAccessToken(accessToken);
+        log.info({ endpoint: '/api/docenten', Token }, 'User logged out');
     
-    app.patch('/api/docenten/:id', async (req, res) => {
-      log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
-      const query = { "_id" : new ObjectId(req.params.id) };
+        // Delete the access token from the database
+        deleteAccessToken(Token);
     
+<<<<<<< HEAD
       // verifies old token and generates a new one if verified
       const accessToken = refreshAccessToken(email, accessToken)
      
@@ -143,6 +147,15 @@ app.post('/api/login', async (req, res) => {
         return res.status(400).send("Error 400: Docent niet verwijderd");
       }
     });
+=======
+        return res.status(200).json({ message: 'User logged out successfully' });
+      } catch (error) {
+        return res.status(500).json({ error: 'An error occurred during logout' });
+      }
+    });
+    
+   
+>>>>>>> dd8c7df2378f5a3bc18a213339eccd7e6a9b992b
 
     //---- DOCENTEN-----
 
