@@ -108,48 +108,22 @@ app.post('/api/login', async (req, res) => {
 });
     
     //---LOGOUT---                                                                    
-  
+   
+    app.post('/api/logout', async (req, res) => {
+      try {
+        const Token = refreshAccessToken(accessToken);
+        log.info({ endpoint: '/api/docenten', Token }, 'User logged out');
     
-    app.patch('/api/docenten/:id', async (req, res) => {
-      log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
-      const query = { "_id" : new ObjectId(req.params.id) };
+        // Delete the access token from the database
+        deleteAccessToken(Token);
     
-      // Generate a new access token and verifies it
-      const accessToken = refreshAccessToken(email, accessToken)
-      const decoded = verifyAccessToken(accessToken);
-      if (!decoded || decoded.email !== user.email) {
-        return res.status(401).send('Unauthorized');
-      }
-    
-      const results = await database.collection('docenten').replaceOne(query, req.body);
-      if (results.acknowledged) {
-        return res.status(200).send("row updated");
-      } else {
-        log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'PATCH request docent failed');
-        return res.status(400).end();
+        return res.status(200).json({ message: 'User logged out successfully' });
+      } catch (error) {
+        return res.status(500).json({ error: 'An error occurred during logout' });
       }
     });
     
-    app.delete('/api/docenten/:id', async (req, res) => {
-      log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent received');
-      const query = { "_id" : new ObjectId(req.params.id) };
-    
-     // Generate a new access token and verifies it
-     const accessToken = refreshAccessToken(email, accessToken)
-     const decoded = verifyAccessToken(accessToken);
-     if (!decoded || decoded.email !== user.email) {
-       return res.status(401).send('Unauthorized');
-     }
-    
-      const result = await database.collection('docenten').deleteOne(query);
-      if (result.acknowledged) {
-        deleteAccessToken(accessToken);
-        return res.status(200).send("Docent verwijderd");
-      } else {
-        log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent NOT received'); 
-        return res.status(400).send("Error 400: Docent niet verwijderd");
-      }
-    });
+   
 
     //---- DOCENTEN-----
 
