@@ -61,10 +61,12 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         // Check if the user was successfully registered
         if (result.acknowledged) {
           return res.status(201).json({ message: 'User registered successfully' });
+
         } else {
           return res.status(500).json({ error: 'Failed to register user' });
         }
       } catch (error) {
+        console.log(error);
         return res.status(500).json({ error: 'An error occurred during registration' });
       }
     });
@@ -116,38 +118,6 @@ app.post('/api/login', async (req, res) => {
         // Delete the access token from the database
         deleteAccessToken(Token);
     
-<<<<<<< HEAD
-      // verifies old token and generates a new one if verified
-      const accessToken = refreshAccessToken(email, accessToken)
-     
-    
-      const results = await database.collection('docenten').replaceOne(query, req.body);
-      if (results.acknowledged) {
-        return res.status(200).send("row updated");
-      } else {
-        log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'PATCH request docent failed');
-        return res.status(400).end();
-      }
-    });
-    
-    app.delete('/api/docenten/:id', async (req, res) => {
-      log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent received');
-      const query = { "_id" : new ObjectId(req.params.id) };
-    
-     // Generate a new access token and verifies it
-     const accessToken = refreshAccessToken(email, accessToken)
-   
-    
-      const result = await database.collection('docenten').deleteOne(query);
-      if (result.acknowledged) {
-        deleteAccessToken(accessToken);
-        return res.status(200).send("Docent verwijderd");
-      } else {
-        log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent NOT received'); 
-        return res.status(400).send("Error 400: Docent niet verwijderd");
-      }
-    });
-=======
         return res.status(200).json({ message: 'User logged out successfully' });
       } catch (error) {
         return res.status(500).json({ error: 'An error occurred during logout' });
@@ -155,7 +125,6 @@ app.post('/api/login', async (req, res) => {
     });
     
    
->>>>>>> dd8c7df2378f5a3bc18a213339eccd7e6a9b992b
 
     //---- DOCENTEN-----
 
