@@ -7,13 +7,13 @@ function generateAccessToken(email) {
   const payload = {
     userId: email._id, 
      // Set the token expiration time (30 seconds from the current time)
-     expiresAt: Math.floor(Date.now() / 1000) + 30, 
+     expiresAt: Math.floor(Date.now() / 1000) + 120, 
 
   };
 
   const options = {
     // Set the token expiration time (30 seconds)
-    expiresIn: '30s', 
+    expiresIn: '120s', 
   };
 
   return jwt.sign(payload, secretKey, options);
@@ -30,15 +30,16 @@ function verifyAccessToken(token) {
 }
 
 // verifies and refreshes the token if properly verified
-async function refreshAccessToken(email, oldToken) {
+async function refreshAccessToken(database, email, oldToken) {
   // Verify the old token, if not correct it throws an error and ceases the rest of the function of refresh AccesToken
   const decodedToken = verifyAccessToken(oldToken);
   if (!decodedToken) {
+    console.log('Invalid or expired access token');
     throw new Error('Invalid or expired access token');
   }
  // generates the new token
   const newToken = generateAccessToken(email);
-
+console.log('new token: ' + newToken);
   try {
     // Checks if the email and the old token in the db match, then updates the old token
     const collection = database.collection('gebruikers');
@@ -50,6 +51,7 @@ async function refreshAccessToken(email, oldToken) {
     if (result.modifiedCount === 1) {
       return newToken;
     } else {
+      console.log('Failed to update access token');
       throw new Error('Failed to update access token');
     }
   } catch (error) {
@@ -59,7 +61,7 @@ async function refreshAccessToken(email, oldToken) {
 
 
 //deletes the access token from the database
-async function deleteAccessToken(accessToken) {
+async function deleteAccessToken(database, accessToken) {
   try {
     const client = await MongoClient.connect('mongodb://localhost:27017');
     const db = client.db('teacherDex');
