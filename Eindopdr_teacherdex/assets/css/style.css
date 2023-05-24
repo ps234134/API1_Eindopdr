@@ -39,6 +39,19 @@ header {
 	cursor: pointer;
 }
 
+header .button-crud button{
+  background-color: #e76f51;
+  border: 1px solid #e76f51;
+  color: #023047;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+    padding: 0.5rem;
+    border-radius: 5px;
+  margin: 0 10px;
+
+}
+
 .card {
 	flex: 1;
 	width: 300px;
@@ -354,4 +367,126 @@ nav {
   font-weight: bold;
   margin: 0;
   padding: 10px;
+}
+
+
+/* login */
+
+
+.form-login {
+  max-width: 300px;
+  padding: 20px;
+  background-color: #f2f2f2;
+  margin: 0 auto;
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  display: none;
+}
+
+.form-login h2 {
+  text-align: center;
+}
+
+.form-login label {
+  font-weight: bold;
+}
+
+.form-login input[type=text],
+.form-login input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.form-login button {
+  background-color: #4caf50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.form-login .close{
+  background-color: #f44336;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.form-login button:hover {
+  opacity: 0.8;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.form-register {
+  max-width: 300px;
+  padding: 20px;
+  background-color: #f2f2f2;
+  margin: 0 auto;
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  display: none;
+}
+
+.form-register h2 {
+  text-align: center;
+}
+
+.form-register label {
+  font-weight: bold;
+}
+
+.form-register input[type=text],
+.form-register input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.form-register button {
+  background-color: #4caf50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.form-register .closeRegister{
+  background-color: #f44336;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.form-register button:hover {
+  opacity: 0.8;
 }
