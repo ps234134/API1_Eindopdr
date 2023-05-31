@@ -23,8 +23,7 @@ const log = bunyan.createLogger({ name: 'teacherDex', streams: [{ path: './teach
 // export file as app for testing, see feature.test.js
 module.exports = app;
 
-let _bearer = req.headers['authorization'].split(' ')[1];
-console.log(_bearer);
+let _bearer = '';
 
 MongoClient.connect(connectionString, { useUnifiedTopology: true })
 .then(client => {
@@ -98,16 +97,16 @@ app.post('/api/login', async (req, res) => {
     }
 
     // Generate a new access token and update the user with the new access token
-    const accessToken = generateAccessToken(email);
+    const _bearer = generateAccessToken(email);
     await database.collection('gebruikers').updateOne(
       { email },
-      { $set: { accesstoken: accessToken } }
+      { $set: { accesstoken: _bearer } }
     );
 
-    log.info({ endpoint: '/api/login', email, accessToken }, 'User logged in');
+    log.info({ endpoint: '/api/login', email, _bearer }, 'User logged in');
 
     // Return the access token to the client
-    return res.status(200).json({ accessToken });
+    return res.status(200).json({ _bearer });
   } catch (error) {
     return res.status(500).json({ error: 'An error occurred during login' });
   }
@@ -176,33 +175,51 @@ app.post('/api/login', async (req, res) => {
         res.status(400).end();
       });
        
-         
-      // PATCH docent
-      app.patch('/api/docenten/:id', async (req, res) => {
-        log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
-        const query = { "_id" : new ObjectId(req.params.id) };
-        const results = await database.collection('docenten').replaceOne(query, req.body);
-        
+// PATCH docent
+app.patch('/api/docenten/:id', async (req, res) => {
+  log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
+  const query = { "_id" : new ObjectId(req.params.id) };
 
-        if (results.acknowledged) return res.status(200).send("row updated");
-        log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'PATCH request docent failed');
-        res.status(400).end();
-      });
+  try {
+    log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Access token verification');
+    _bearer = refreshAccessToken(_bearer);
 
-      // DELETE docent
-    app.delete('/api/docenten/:id', async (req, res) => {
-        log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent received');
-        const query = { "_id" : new ObjectId(req.params.id) }
-        const result = await database.collection('docenten').deleteOne(query)
+    const results = await database.collection('docenten').replaceOne(query, req.body);
+    if (results.acknowledged) {
+      return res.status(200).send("Row updated");
+    } else {
+      log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'PATCH request docent failed');
+      return res.status(400).end();
+    }
+  } catch (error) {
+    log.error({ endpoint: '/api/docenten/:id', error }, 'Error in PATCH request docent');
+    return res.status(500).json({ error: 'An error occurred during PATCH request' });
+  }
+});
 
-        if (result.acknowledged) {
-            return res.status(200).send("Docent verwijderd");
-          } else {
-            // this might break the code delete if so
-            log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent NOT received'); 
-            return res.status(400).send("Error 400: Docent niet verwijderd");
-          }
-      })  
+// DELETE docent
+app.delete('/api/docenten/:id', async (req, res) => {
+  log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent received');
+  const query = { "_id" : new ObjectId(req.params.id) };
+
+  try {
+    log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Access token verification');
+    _bearer = refreshAccessToken(_bearer);
+
+    const result = await database.collection('docenten').deleteOne(query);
+    if (result.acknowledged) {
+      log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Docent deleted');
+      return res.status(200).send("Docent verwijderd");
+    } else {
+      log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'DELETE request docent failed');
+      return res.status(400).send("Error 400: Docent niet verwijderd");
+    }
+  } catch (error) {
+    log.error({ endpoint: '/api/docenten/:id', error }, 'Error in DELETE request docent');
+    return res.status(500).json({ error: 'An error occurred during DELETE request' });
+  }
+});
+
       
       
      //---- VAKKEN-----
