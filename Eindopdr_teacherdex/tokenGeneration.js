@@ -29,21 +29,21 @@ function verifyAccessToken(token) {
 }
 
 // verifies and refreshes the token if properly verified
-async function refreshAccessToken(database,oldToken) {
-  // Verify the old token, if not correct it throws an error and ceases the rest of the function of refresh AccesToken
-  const decodedToken = verifyAccessToken(oldToken);
-  if (!decodedToken) {
-    throw new Error('Invalid or expired access token');
-  }
- // generates the new token
-  const newToken = generateAccessToken(email);
-
+async function refreshAccessToken(database, oldToken) {
   try {
-    // Checks if the email and the old token in the db match, then updates the old token
-   
+    // Verify the old token, if not correct it throws an error and ceases the rest of the function
+    const decodedToken = verifyAccessToken(oldToken);
+    if (!decodedToken) {
+      throw new Error('Invalid or expired access token');
+    }
+
+    // Generate the new token
+    const newToken = generateAccessToken(decodedToken.email);
+
+    // Update the old token in the database with the new token
     const result = await database.updateOne(
-      { email: email, accesstoken: oldToken },
-      { $set: { accesstoken: newToken } }
+      { email: decodedToken.email, accessToken: oldToken },
+      { $set: { accessToken: newToken } }
     );
 
     if (result.modifiedCount === 1) {
