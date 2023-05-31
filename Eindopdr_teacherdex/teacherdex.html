@@ -23,6 +23,7 @@
         <button id="add">Add teacher</button>
         <button id="loginBtn">Login</button>
         <button id="registerBtn">Register</button>
+        <button id="logoutBtn">Logout</button>
       </div>
     </header>
     <div class="form-login" id="classLogin">
@@ -57,6 +58,7 @@
           type="text"
           placeholder="Enter Name"
           name="registerName"
+          id="registerName"
           required
         />
 
@@ -65,6 +67,7 @@
           type="text"
           placeholder="Enter Email"
           name="registerEmail"
+          id="registerEmail"
           required
         />
 
@@ -73,6 +76,7 @@
           type="password"
           placeholder="Enter Password"
           name="registerPassword"
+          id="registerPassword"
           required
         />
 
@@ -80,6 +84,15 @@
         <button type="button" class="closeRegister">Close</button>
       </form>
     </div>
+
+    <div class="form-logout" id="classLogout">
+      <form class="logout-container" id="logoutForm">
+        <h2>Logout</h2>
+        <button type="submit" class="btn">Logout</button>
+        <button type="button" class="closeLogout">Close</button>
+      </form>
+    </div>
+
     <div class="form-popup" id="myForm">
       <form class="form-container">
         <h2>Add Teacher</h2>
