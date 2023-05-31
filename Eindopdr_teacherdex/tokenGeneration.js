@@ -5,14 +5,14 @@ const secretKey = 'Kinga_Tutai'; // Replace with your secret key
 function generateAccessToken(email) {
   const payload = {
     userId: email._id, 
-     // Set the token expiration time (30 seconds from the current time)
-     expiresAt: Math.floor(Date.now() / 1000) + 30, 
+     // Set the token expiration time (60 seconds from the current time)
+     expiresAt: Math.floor(Date.now() / 1000) + 600, 
 
   };
 
   const options = {
     // Set the token expiration time (30 seconds)
-    expiresIn: '30s', 
+    expiresIn: '600s', 
   };
 
   return jwt.sign(payload, secretKey, options);
