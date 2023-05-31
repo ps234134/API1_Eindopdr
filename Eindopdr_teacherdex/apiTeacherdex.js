@@ -167,6 +167,7 @@ app.post('/api/login', async (req, res) => {
         res.send(results);
       })
 
+      // CREATE Docent
       app.post('/api/docenten', async (req, res) => {
         log.info({ endpoint: '/api/docenten', body: req.body }, 'POST request docent received');
         const results = await database.collection('docenten').insertOne(req.body);
