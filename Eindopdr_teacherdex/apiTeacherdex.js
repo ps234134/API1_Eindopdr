@@ -23,6 +23,9 @@ const log = bunyan.createLogger({ name: 'teacherDex', streams: [{ path: './teach
 // export file as app for testing, see feature.test.js
 module.exports = app;
 
+let _bearer = req.headers['authorization'].split(' ')[1];
+console.log(_bearer);
+
 MongoClient.connect(connectionString, { useUnifiedTopology: true })
 .then(client => {
 
@@ -115,16 +118,14 @@ app.post('/api/login', async (req, res) => {
     app.post('/api/logout', async (req, res) => {
       const { email, wachtwoord } = req.body;
       try {
-        let bearer = req.headers['authorization'].split(' ')[1];
-        console.log(bearer);
+        console.log(_bearer);
 
-        await  verifyAccessToken(bearer);
-        console.log('test5');
-        console.log(bearer);
-        log.info({ endpoint: '/api/docenten', bearer }, 'User logged out');
+        await  verifyAccessToken(_bearer);
+        console.log(_bearer);
+        log.info({ endpoint: '/api/docenten', _bearer }, 'User logged out');
     
         // Delete the access token from the database
-        deleteAccessToken(database, bearer);
+        deleteAccessToken(database, _bearer);
         log.info({ endpoint: '/api/docenten', Token }, 'User logged out');
     
         return res.status(200).json({ message: 'User logged out successfully' });
