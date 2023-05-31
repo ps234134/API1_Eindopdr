@@ -175,50 +175,50 @@ app.post('/api/login', async (req, res) => {
         res.status(400).end();
       });
        
-// PATCH docent
-app.patch('/api/docenten/:id', async (req, res) => {
-  log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
-  const query = { "_id" : new ObjectId(req.params.id) };
+    // PATCH docent
+    app.patch('/api/docenten/:id', async (req, res) => {
+      log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
+      const query = { "_id" : new ObjectId(req.params.id) };
 
-  try {
-    log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Access token verification');
-    _bearer = refreshAccessToken(_bearer);
+      try {
+        log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Access token verification');
+        _bearer = refreshAccessToken(_bearer);
 
-    const results = await database.collection('docenten').replaceOne(query, req.body);
-    if (results.acknowledged) {
-      return res.status(200).send("Row updated");
-    } else {
-      log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'PATCH request docent failed');
-      return res.status(400).end();
-    }
-  } catch (error) {
-    log.error({ endpoint: '/api/docenten/:id', error }, 'Error in PATCH request docent');
-    return res.status(500).json({ error: 'An error occurred during PATCH request' });
-  }
-});
+        const results = await database.collection('docenten').replaceOne(query, req.body);
+        if (results.acknowledged) {
+          return res.status(200).send("Row updated");
+        } else {
+          log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'PATCH request docent failed');
+          return res.status(400).end();
+        }
+      } catch (error) {
+        log.error({ endpoint: '/api/docenten/:id', error }, 'Error in PATCH request docent');
+        return res.status(500).json({ error: 'An error occurred during PATCH request' });
+      }
+    });
 
-// DELETE docent
-app.delete('/api/docenten/:id', async (req, res) => {
-  log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent received');
-  const query = { "_id" : new ObjectId(req.params.id) };
+      // DELETE docent
+      app.delete('/api/docenten/:id', async (req, res) => {
+        log.info({ endpoint: '/api/docenten/:id' }, 'DELETE request docent received');
+        const query = { "_id" : new ObjectId(req.params.id) };
 
-  try {
-    log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Access token verification');
-    _bearer = refreshAccessToken(_bearer);
+        try {
+          log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Access token verification');
+          _bearer = refreshAccessToken(_bearer);
 
-    const result = await database.collection('docenten').deleteOne(query);
-    if (result.acknowledged) {
-      log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Docent deleted');
-      return res.status(200).send("Docent verwijderd");
-    } else {
-      log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'DELETE request docent failed');
-      return res.status(400).send("Error 400: Docent niet verwijderd");
-    }
-  } catch (error) {
-    log.error({ endpoint: '/api/docenten/:id', error }, 'Error in DELETE request docent');
-    return res.status(500).json({ error: 'An error occurred during DELETE request' });
-  }
-});
+          const result = await database.collection('docenten').deleteOne(query);
+          if (result.acknowledged) {
+            log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Docent deleted');
+            return res.status(200).send("Docent verwijderd");
+          } else {
+            log.error({ endpoint: '/api/docenten/:id', error: 'Bad Request' }, 'DELETE request docent failed');
+            return res.status(400).send("Error 400: Docent niet verwijderd");
+          }
+        } catch (error) {
+          log.error({ endpoint: '/api/docenten/:id', error }, 'Error in DELETE request docent');
+          return res.status(500).json({ error: 'An error occurred during DELETE request' });
+        }
+      });
 
       
       

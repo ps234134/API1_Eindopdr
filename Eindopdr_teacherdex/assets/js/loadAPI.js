@@ -1,5 +1,4 @@
-
-"use strict"
+"use strict";
 // Main api handler
 const api = {
   docenten: "http://127.0.0.1:8081/api/docenten",
@@ -78,7 +77,6 @@ const generateCards = async () => {
 
         const popupRemove = card.querySelector(".popup-remove");
         const popupClose = card.querySelector(".popup-close");
-        
 
         popupImg.src = docent.img;
         popupNaam.innerText = `Naam: ${docent.naam}`;
@@ -87,7 +85,6 @@ const generateCards = async () => {
         popupEmail.innerText = `Email: ${docent.email}`;
         popupKlas.innerText = `Klas: ${docent.klasNaam}`;
         popupVak.innerText = `Vak: ${docent.vakNaam}`;
-
 
         popupRemove.addEventListener("click", async () => {
           try {
@@ -159,7 +156,9 @@ const generateCards = async () => {
       popupVak.classList.add("popup-vak");
       popup.appendChild(popupVak);
 
-      const closeBtnForm = document.querySelector(".modal-form-popup .closeBtn");
+      const closeBtnForm = document.querySelector(
+        ".modal-form-popup .closeBtn"
+      );
       const modalForm = document.querySelector(".modal-form-popup");
       const editButton = document.createElement("button");
       editButton.classList.add("popup-edit");
@@ -169,15 +168,15 @@ const generateCards = async () => {
           // Fetch docent data
           const response = await fetch(`${api.docenten}/${docentId}`);
           const docent = await response.json();
-      
+
           // Fetch klas data for dropdown
           const klasResponse = await fetch(api.klassen);
           const klassen = await klasResponse.json();
-      
+
           // Fetch vak data for dropdown
           const vakResponse = await fetch(api.vakken);
           const vakken = await vakResponse.json();
-      
+
           // Set values in the form
           document.getElementById("naamModal").value = docent.naam;
           document.getElementById("achternaamModal").value = docent.achternaam;
@@ -199,33 +198,38 @@ const generateCards = async () => {
                 }>${vak.naam}</option>`
             )
             .join("");
-      
         };
-        
+
         openModal(docent._id);
         modalForm.style.display = "block";
       });
-      
+
       closeBtnForm.addEventListener("click", () => {
         modalForm.style.display = "none";
       });
-      
-      popup.appendChild(editButton);
 
+      popup.appendChild(editButton);
 
       const removeButton = document.createElement("button");
       removeButton.classList.add("popup-remove");
       removeButton.innerText = "Remove";
-      removeButton.addEventListener("click", () => {
-        fetch(`/api/docenten/${docent._id}`, {
-          method: "DELETE",
-        })
-          .then((res) => res.text())
-          .then((data) => {
-            console.log(data);
-            location.reload();
-          })
-          .catch((error) => console.log(error));
+      removeButton.addEventListener("click", async () => {
+        try {
+          const response = await fetch(`${api.docenten}/${docent._id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${_bearer}`,
+            },
+          });
+          if (response.ok) {
+            // Remove the card from the UI
+            container.removeChild(card);
+          } else {
+            console.log("Failed to delete docent");
+          }
+        } catch (error) {
+          console.log(error);
+        }
       });
       popup.appendChild(removeButton);
 
@@ -237,3 +241,154 @@ const generateCards = async () => {
   }
 };
 
+// login
+
+  // // Add this JavaScript code to your existing main.js file or create a new one
+  // document.getElementById("loginBtn").addEventListener("click", function() {
+  //   document.getElementById("classLogin").style.display = "block";
+  // });
+
+  document.getElementsByClassName("close")[0].addEventListener("click", function() {
+    document.getElementById("classLogin").style.display = "none";
+  });
+
+  // document.getElementById("loginForm").addEventListener("submit", function(event) {
+  //   event.preventDefault();
+  //   // Add your login form submission logic here
+  // });
+
+  // document.getElementById("registerBtn").addEventListener("click", function() {
+  //   document.getElementById("classRegister").style.display = "block";
+  // });
+
+
+  document.getElementsByClassName("closeRegister")[0].addEventListener("click", function() {
+    document.getElementById("classRegister").style.display = "none";
+  });
+
+  // document.getElementById("registerForm").addEventListener("submit", function(event) {
+  //   event.preventDefault();
+  //   // Add your login form submission logic here
+  // });
+
+ // Event listeners
+ document.getElementById("loginForm").addEventListener("submit", login);
+ document.getElementById("registerForm").addEventListener("submit", register);
+ document.getElementById("logoutForm").addEventListener("submit", logout);
+ document.getElementById("loginBtn").addEventListener("click", showLoginForm);
+ document.getElementById("registerBtn").addEventListener("click", showRegisterForm);
+ document.getElementById("logoutBtn").addEventListener("click", logout);
+  // Functions
+  function login(event) {
+    event.preventDefault();
+    // Retrieve form data
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    // Send login request to the server
+    fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle login response
+        if (data._bearer) {
+          // Login successful
+          // Hide login and register buttons, show logout button
+          document.getElementById("classLogin").style.display = "none";
+          document.getElementById("classRegister").style.display = "none";
+          document.getElementById("classLogout").style.display = "block";
+        } else {
+          // Login failed
+          alert("Login failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred during login. Please try again.");
+      });
+  }
+
+   
+
+  function register(event) {
+    event.preventDefault();
+    // Retrieve form data
+    const name = document.getElementById("registerName").value;
+    const email = document.getElementById("registerEmail").value;
+    const password = document.getElementById("registerPassword").value;
+
+    // Send register request to the server
+    fetch("/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle register response
+        if (data.success) {
+          // Registration successful
+          // Hide login and register buttons, show logout button
+          document.getElementById("classLogin").style.display = "none";
+          document.getElementById("classRegister").style.display = "none";
+          document.getElementById("classLogout").style.display = "block";
+        } else {
+          // Registration failed
+          alert("Registration failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred during registration. Please try again.");
+      });
+  }
+
+  function logout(event) {
+    event.preventDefault();
+    // Send logout request to the server
+    fetch("/api/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle logout response
+        if (data.success) {
+          // Logout successful
+          // Hide logout button, show login and register buttons
+          document.getElementById("classLogout").style.display = "none";
+          document.getElementById("classLogin").style.display = "block";
+          document.getElementById("classRegister").style.display = "block";
+        } else {
+          // Logout failed
+          alert("Logout failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred during logout. Please try again.");
+      });
+  }
+
+  function showLoginForm() {
+    // Show login form, hide register form
+    document.getElementById("classLogin").style.display = "block";
+    document.getElementById("classRegister").style.display = "none";
+    document.getElementById("classLogout").style.display = "none";
+  }
+
+  function showRegisterForm() {
+    // Show register form, hide login form
+    document.getElementById("classLogin").style.display = "none";
+    document.getElementById("classRegister").style.display = "block";
+    document.getElementById("classLogout").style.display = "none";
+  }

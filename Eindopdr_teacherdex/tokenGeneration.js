@@ -6,13 +6,13 @@ function generateAccessToken(email) {
   const payload = {
     userId: email._id, 
      // Set the token expiration time (30 seconds from the current time)
-     expiresAt: Math.floor(Date.now() / 1000) + 30, 
+     expiresAt: Math.floor(Date.now() / 1000) + 300, 
 
   };
 
   const options = {
     // Set the token expiration time (30 seconds)
-    expiresIn: '30s', 
+    expiresIn: '300s', 
   };
 
   return jwt.sign(payload, secretKey, options);
