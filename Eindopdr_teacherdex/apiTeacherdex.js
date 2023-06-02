@@ -125,7 +125,7 @@ app.post('/api/login', async (req, res) => {
     
         // Delete the access token from the database
         deleteAccessToken(database, _bearer);
-        log.info({ endpoint: '/api/docenten', Token }, 'User logged out');
+        log.info({ endpoint: '/api/docenten', _bearer }, 'User logged out');
     
         return res.status(200).json({ message: 'User logged out successfully' });
       } catch (error) {
