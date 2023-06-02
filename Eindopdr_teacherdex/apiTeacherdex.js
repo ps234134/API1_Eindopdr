@@ -115,26 +115,26 @@ app.post('/api/login', async (req, res) => {
     //---LOGOUT---                                                                    
    
     app.post('/api/logout', async (req, res) => {
-      const { email, wachtwoord } = req.body;
+      const accessToken = req.headers.authorization; // Assuming the access token is sent in the "Authorization" header
       try {
-        console.log(_bearer);
-
-        await  verifyAccessToken(_bearer);
-        console.log(_bearer);
-        log.info({ endpoint: '/api/docenten', _bearer }, 'User logged out');
+        // Verify the access token
+        const decodedToken = verifyAccessToken(accessToken);
+        if (!decodedToken) {
+          return res.status(401).json({ error: 'Invalid access token' });
+        }
+    
+        // Log the logout event
+        log.info({ endpoint: '/api/logout', accessToken }, 'User logged out');
     
         // Delete the access token from the database
-        deleteAccessToken(database, _bearer);
-        log.info({ endpoint: '/api/docenten', _bearer }, 'User logged out');
+        await deleteAccessToken(database, accessToken);
     
         return res.status(200).json({ message: 'User logged out successfully' });
       } catch (error) {
-        console.log('test6');
-
+        console.error('Error during logout:', error);
         return res.status(500).json({ error: 'An error occurred during logout' });
       }
     });
-    
    
 
     //---- DOCENTEN-----

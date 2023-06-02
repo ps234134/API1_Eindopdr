@@ -58,20 +58,20 @@ async function refreshAccessToken(database, oldToken) {
 
 
 //deletes the access token from the database
-async function deleteAccessToken(database,accessToken) {
+async function deleteAccessToken(database, accessToken) {
   try {
-
-    // Delete the matching  access token
-    const query = { accesstoken: accessToken };
-    const result = await database.deleteOne(query);
+    console.log(accessToken);
+    // Get the access tokens collection from the database
+    const collection = database.collection('gebruikers'); // Replace 'accessTokens' with the correct collection name
+    console.log('Access token to be deleted:', accessToken);
+    // Delete the matching access token
+    const result = await collection.deleteOne({ accessToken: accessToken.trim() });
 
     if (result.deletedCount === 1) {
       console.log('Access token deleted successfully');
     } else {
       console.log('Access token not found');
     }
-
-    client.close();
   } catch (error) {
     console.error('Error deleting access token:', error);
   }
