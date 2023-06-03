@@ -115,7 +115,7 @@ app.post('/api/login', async (req, res) => {
     //---LOGOUT---                                                                    
    
     app.post('/api/logout', async (req, res) => {
-      const accessToken = req.headers.authorization; // Assuming the access token is sent in the "Authorization" header
+      const accessToken = req.headers.authorization.split(" ")[1]; // Extract the access token from the Authorization header
       try {
         // Verify the access token
         const decodedToken = verifyAccessToken(accessToken);

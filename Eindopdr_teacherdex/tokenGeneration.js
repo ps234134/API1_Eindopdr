@@ -60,14 +60,16 @@ async function refreshAccessToken(database, oldToken) {
 //deletes the access token from the database
 async function deleteAccessToken(database, accessToken) {
   try {
-    console.log(accessToken);
     // Get the access tokens collection from the database
-    const collection = database.collection('gebruikers'); // Replace 'accessTokens' with the correct collection name
-    console.log('Access token to be deleted:', accessToken);
-    // Delete the matching access token
-    const result = await collection.deleteOne({ accessToken: accessToken.trim() });
+    const collection = database.collection('gebruikers'); // Replace 'gebruikers' with the correct collection name
 
-    if (result.deletedCount === 1) {
+    // Delete the matching access token
+    const result = await collection.updateOne(
+      { accesstoken: accessToken.trim() }, // Replace 'accesstoken' with the correct field name for access token
+      { $unset: { accesstoken: "" } } // Use $unset to remove the access token field from the document
+    );
+
+    if (result.modifiedCount === 1) {
       console.log('Access token deleted successfully');
     } else {
       console.log('Access token not found');
@@ -76,7 +78,6 @@ async function deleteAccessToken(database, accessToken) {
     console.error('Error deleting access token:', error);
   }
 }
-
 module.exports = {
   generateAccessToken,
   verifyAccessToken,

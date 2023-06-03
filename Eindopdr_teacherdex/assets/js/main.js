@@ -341,6 +341,14 @@ document.getElementsByClassName("closeRegister")[0].addEventListener("click", fu
   document.getElementById("classRegister").style.display = "none";
 });
 
+// Store the access token in a variable after successful login
+let accessToken = "";
+
+// Function to handle user login and set the access token
+function handleLogin(data) {
+  accessToken = data._bearer; // Set the access token value from the response data
+}
+
 // Event listeners
 document.getElementById("loginForm").addEventListener("submit", login);
 document.getElementById("registerForm").addEventListener("submit", register);
@@ -368,7 +376,10 @@ async function login(event) {
 
     if (response.ok) {
       // Login successful
+      alert("Login successful");
       const data = await response.json();
+      // Store the access token
+      handleLogin(data);
       // Hide login and register buttons, show logout button
       document.getElementById("loginBtn").style.display = "none";
       document.getElementById("classLogin").style.display = "none";
@@ -403,6 +414,7 @@ async function register(event) {
 
     if (response.ok) {
       // Registration successful
+      alert("Registration successful");
       // Hide login and register buttons, show logout button
       document.getElementById("loginBtn").style.display = "block";
       document.getElementById("registerBtn").style.display = "block";
@@ -421,20 +433,26 @@ async function register(event) {
 async function logout(event) {
   event.preventDefault();
   try {
+    // Verify the access token value
+    console.log(accessToken);
     // Send logout request to the server
     const response = await fetch("http://127.0.0.1:8081/api/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`, // Include the access token in the Authorization header
       },
     });
 
     if (response.ok) {
       // Logout successful
+      alert("Logout successful");
       // Hide logout button, show login and register buttons
       document.getElementById("loginBtn").style.display = "block";
       document.getElementById("registerBtn").style.display = "block";
       document.getElementById("logoutBtn").style.display = "none";
+      // Reset the access token
+      accessToken = "";
     } else {
       // Logout failed
       alert("Logout failed. Please try again.");
@@ -458,7 +476,6 @@ function showRegisterForm() {
   document.getElementById("classRegister").style.display = "block";
   document.getElementById("classLogout").style.display = "none";
 }
-
 
 
 
