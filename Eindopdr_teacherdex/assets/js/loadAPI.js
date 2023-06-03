@@ -1,4 +1,6 @@
 "use strict";
+
+
 // Main api handler
 const api = {
   docenten: "http://127.0.0.1:8081/api/docenten",
@@ -31,8 +33,9 @@ const fetchVak = async (id) => {
 const fetchDocenten = async () => {
   try {
     const response = await fetch(api.docenten);
+    console.log("Response status:", response.status); // Check the response status
     const data = await response.json();
-
+    console.log("Fetched docenten:", data);
     const docenten = await Promise.all(
       data.map(async (docent) => {
         const klasNaam = await fetchKlas(docent.klasId);
@@ -90,6 +93,9 @@ const generateCards = async () => {
           try {
             const response = await fetch(`${api.docenten}/${docent._id}`, {
               method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             });
             if (response.ok) {
               // Remove the card from the UI
@@ -162,6 +168,7 @@ const generateCards = async () => {
       const modalForm = document.querySelector(".modal-form-popup");
       const editButton = document.createElement("button");
       editButton.classList.add("popup-edit");
+      editButton.id= "popup-edit";
       editButton.innerText = "Edit";
       editButton.addEventListener("click", () => {
         const openModal = async (docentId) => {
@@ -212,13 +219,16 @@ const generateCards = async () => {
 
       const removeButton = document.createElement("button");
       removeButton.classList.add("popup-remove");
+      removeButton.id = "popup-remove";
       removeButton.innerText = "Remove";
+      
+
       removeButton.addEventListener("click", async () => {
         try {
           const response = await fetch(`${api.docenten}/${docent._id}`, {
             method: "DELETE",
             headers: {
-              Authorization: `Bearer ${_bearer}`,
+              Authorization: `Bearer ${token}`,
             },
           });
           if (response.ok) {
