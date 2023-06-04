@@ -51,6 +51,13 @@ closeBtn.addEventListener("click", () => {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
+  const editBtns = document.getElementsByClassName("popup-edit");
+  const removeBtns = document.getElementsByClassName("popup-remove");
+  const addBtn = document.getElementById("add");
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+
   const naam = document.querySelector('input[name="naam"]').value;
   const achternaam = document.querySelector('input[name="achternaam"]').value;
   const afkorting = document.querySelector('input[name="afkorting"]').value;
@@ -87,7 +94,6 @@ form.addEventListener("submit", (event) => {
       console.error("Error:", error);
     });
 });
-
 // login
 
 document.getElementsByClassName("close")[0].addEventListener("click", function() {

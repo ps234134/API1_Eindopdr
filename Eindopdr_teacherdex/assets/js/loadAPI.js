@@ -30,9 +30,13 @@ const fetchVak = async (id) => {
   }
 };
 
-const fetchDocenten = async () => {
+const fetchDocenten = async (_bearer) => {
   try {
-    const response = await fetch(api.docenten);
+    const response = await fetch(api.docenten, {
+      headers: {
+        Authorization: `Bearer ${_bearer}`,
+      },
+    });
     console.log("Response status:", response.status); // Check the response status
     const data = await response.json();
     console.log("Fetched docenten:", data);
@@ -55,9 +59,9 @@ const fetchDocenten = async () => {
   }
 };
 
-const generateCards = async () => {
+const generateCards = async (_bearer) => {
   try {
-    const docenten = await fetchDocenten();
+    const docenten = await fetchDocenten(_bearer);
     const container = document.querySelector(".main");
 
     docenten.forEach((docent) => {
@@ -94,7 +98,7 @@ const generateCards = async () => {
             const response = await fetch(`${api.docenten}/${docent._id}`, {
               method: "DELETE",
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${_bearer}`,
               },
             });
             if (response.ok) {
@@ -228,7 +232,7 @@ const generateCards = async () => {
           const response = await fetch(`${api.docenten}/${docent._id}`, {
             method: "DELETE",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${_bearer}`,
             },
           });
           if (response.ok) {
@@ -250,4 +254,6 @@ const generateCards = async () => {
     console.log(error);
   }
 };
+
+
 
