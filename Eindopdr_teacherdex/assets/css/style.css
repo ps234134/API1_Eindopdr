@@ -552,3 +552,17 @@ nav {
 .button-crud #logoutBtn{
   display: none;
 }
+
+/*CSS for edit, remove, add*/
+
+.button-crud #add{
+  display: none;
+}
+
+.popup #popup-edit{
+  display: none;
+}
+
+.popup #popup-remove{
+  display: none;
+}

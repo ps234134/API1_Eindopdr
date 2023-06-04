@@ -1,5 +1,6 @@
+"use strict";
 
-"use strict"
+
 // Main api handler
 const api = {
   docenten: "http://127.0.0.1:8081/api/docenten",
@@ -29,11 +30,16 @@ const fetchVak = async (id) => {
   }
 };
 
-const fetchDocenten = async () => {
+const fetchDocenten = async (_bearer) => {
   try {
-    const response = await fetch(api.docenten);
+    const response = await fetch(api.docenten, {
+      headers: {
+        Authorization: `Bearer ${_bearer}`,
+      },
+    });
+    console.log("Response status:", response.status); // Check the response status
     const data = await response.json();
-
+    console.log("Fetched docenten:", data);
     const docenten = await Promise.all(
       data.map(async (docent) => {
         const klasNaam = await fetchKlas(docent.klasId);
@@ -53,9 +59,9 @@ const fetchDocenten = async () => {
   }
 };
 
-const generateCards = async () => {
+const generateCards = async (_bearer) => {
   try {
-    const docenten = await fetchDocenten();
+    const docenten = await fetchDocenten(_bearer);
     const container = document.querySelector(".main");
 
     docenten.forEach((docent) => {
@@ -78,7 +84,6 @@ const generateCards = async () => {
 
         const popupRemove = card.querySelector(".popup-remove");
         const popupClose = card.querySelector(".popup-close");
-        
 
         popupImg.src = docent.img;
         popupNaam.innerText = `Naam: ${docent.naam}`;
@@ -88,11 +93,13 @@ const generateCards = async () => {
         popupKlas.innerText = `Klas: ${docent.klasNaam}`;
         popupVak.innerText = `Vak: ${docent.vakNaam}`;
 
-
         popupRemove.addEventListener("click", async () => {
           try {
             const response = await fetch(`${api.docenten}/${docent._id}`, {
               method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${_bearer}`,
+              },
             });
             if (response.ok) {
               // Remove the card from the UI
@@ -159,25 +166,28 @@ const generateCards = async () => {
       popupVak.classList.add("popup-vak");
       popup.appendChild(popupVak);
 
-      const closeBtnForm = document.querySelector(".modal-form-popup .closeBtn");
+      const closeBtnForm = document.querySelector(
+        ".modal-form-popup .closeBtn"
+      );
       const modalForm = document.querySelector(".modal-form-popup");
       const editButton = document.createElement("button");
       editButton.classList.add("popup-edit");
+      editButton.id= "popup-edit";
       editButton.innerText = "Edit";
       editButton.addEventListener("click", () => {
         const openModal = async (docentId) => {
           // Fetch docent data
           const response = await fetch(`${api.docenten}/${docentId}`);
           const docent = await response.json();
-      
+
           // Fetch klas data for dropdown
           const klasResponse = await fetch(api.klassen);
           const klassen = await klasResponse.json();
-      
+
           // Fetch vak data for dropdown
           const vakResponse = await fetch(api.vakken);
           const vakken = await vakResponse.json();
-      
+
           // Set values in the form
           document.getElementById("naamModal").value = docent.naam;
           document.getElementById("achternaamModal").value = docent.achternaam;
@@ -199,33 +209,41 @@ const generateCards = async () => {
                 }>${vak.naam}</option>`
             )
             .join("");
-      
         };
-        
+
         openModal(docent._id);
         modalForm.style.display = "block";
       });
-      
+
       closeBtnForm.addEventListener("click", () => {
         modalForm.style.display = "none";
       });
-      
-      popup.appendChild(editButton);
 
+      popup.appendChild(editButton);
 
       const removeButton = document.createElement("button");
       removeButton.classList.add("popup-remove");
+      removeButton.id = "popup-remove";
       removeButton.innerText = "Remove";
-      removeButton.addEventListener("click", () => {
-        fetch(`/api/docenten/${docent._id}`, {
-          method: "DELETE",
-        })
-          .then((res) => res.text())
-          .then((data) => {
-            console.log(data);
-            location.reload();
-          })
-          .catch((error) => console.log(error));
+      
+
+      removeButton.addEventListener("click", async () => {
+        try {
+          const response = await fetch(`${api.docenten}/${docent._id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${_bearer}`,
+            },
+          });
+          if (response.ok) {
+            // Remove the card from the UI
+            container.removeChild(card);
+          } else {
+            console.log("Failed to delete docent");
+          }
+        } catch (error) {
+          console.log(error);
+        }
       });
       popup.appendChild(removeButton);
 
@@ -236,4 +254,6 @@ const generateCards = async () => {
     console.log(error);
   }
 };
+
+
 
