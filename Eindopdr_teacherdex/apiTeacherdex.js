@@ -180,9 +180,8 @@ app.post('/api/login', async (req, res) => {
     app.patch('/api/docenten/:id', async (req, res) => {
       log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
       const query = { "_id" : new ObjectId(req.params.id) };
-
       try {
-        log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Access token verification');
+        log.info({ endpoint: '/api/docenten/:id', _bearer }, 'Access token verification');
         _bearer = refreshAccessToken(_bearer);
 
         const results = await database.collection('docenten').replaceOne(query, req.body);
