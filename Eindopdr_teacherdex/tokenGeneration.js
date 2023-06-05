@@ -20,6 +20,8 @@ function generateAccessToken(email) {
 // verifies the access token
 function verifyAccessToken(token) {
   try {
+    console.log('Enters verify'); 
+    console.log(token); 
     const decoded = jwt.verify(token, secretKey);
     console.log('Decoded Token:', decoded); 
     return decoded;
@@ -67,7 +69,7 @@ async function deleteAccessToken(database, accessToken) {
 
     // Delete the matching access token
     const result = await collection.updateOne(
-      { accessToken: accessToken.trim() }, // Replace 'accessToken' with the correct field name for access token
+      { accesstoken: accessToken.trim() }, // Replace 'accessToken' with the correct field name for access token
       { $unset: { accessToken: "" } } // Use $unset to remove the access token field from the document
     );
 
