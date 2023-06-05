@@ -23,7 +23,6 @@ const log = bunyan.createLogger({ name: 'teacherDex', streams: [{ path: './teach
 // export file as app for testing, see feature.test.js
 module.exports = app;
 
-let _bearer = '';
 
 MongoClient.connect(connectionString, { useUnifiedTopology: true })
 .then(client => {
@@ -178,12 +177,13 @@ app.post('/api/login', async (req, res) => {
        
     // PATCH docent
     app.patch('/api/docenten/:id', async (req, res) => {
+      const bearer = req.headers.authorization.split(" ")[1]; // Extract the access token from the Authorization header
       log.info({ endpoint: '/api/docenten/:id', body: req.body }, 'PATCH request docent received');
       const query = { "_id" : new ObjectId(req.params.id) };
 
       try {
-        log.info({ endpoint: '/api/docenten/:id', bearer: _bearer }, 'Access token verification');
-        _bearer = refreshAccessToken(_bearer);
+        log.info({ endpoint: '/api/docenten/:id', bearer: bearer }, 'Access token verification');
+        Newbearer = refreshAccessToken(bearer);
 
         const results = await database.collection('docenten').replaceOne(query, req.body);
         if (results.acknowledged) {
