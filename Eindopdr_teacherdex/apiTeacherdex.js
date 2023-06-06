@@ -182,7 +182,7 @@ app.post('/api/login', async (req, res) => {
       const query = { "_id" : new ObjectId(req.params.id) };
       try {
         log.info({ endpoint: '/api/docenten/:id', bearer: bearer }, 'Access token verification');
-        Newbearer = refreshAccessToken(bearer);
+        Newbearer = refreshAccessToken(database, bearer);
 
         const results = await database.collection('docenten').replaceOne(query, req.body);
         if (results.acknowledged) {
