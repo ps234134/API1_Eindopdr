@@ -8,8 +8,9 @@ const ObjectId = require("mongodb").ObjectId;
 const connectionString = "mongodb://127.0.0.1:27017/";
 const {
   generateAccessToken,
-  deleteAccessToken,
+  generateAccessTokenRequest,
   verifyAccessToken,
+  deleteAccessToken,
   refreshAccessToken,
 } = require("./tokenGeneration");
 
@@ -219,65 +220,75 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       res.status(400).end();
     });
 
-    // PATCH docent
-    app.patch("/api/docenten/:id", async (req, res) => {
-      const bearer = req.headers.authorization.split(" ")[1]; // Extract the access token from the Authorization header
-      console.error("AccessToken path:", bearer);
+// PATCH docent
+app.patch("/api/docenten/:id", async (req, res) => {
+  try {
+    const bearer = req.headers.authorization.split(" ")[1];
+    console.error("AccessToken path:", bearer);
 
-      const query = { accesstoken: bearer }; // Use the access token as the query parameter
-      console.error("query:", query);
+    const query = { _id: ObjectId.createFromHexString(req.params.id) }; // Convert req.params.id to ObjectId
+    console.error("query:", query);
 
-      try {
-        console.error("try patch docent");
-        const newBearer = refreshAccessToken(database, bearer);
+    const docent = await database.collection("docenten").findOne(query);
+    console.log("Retrieved Docent:", docent);
 
-        // Update the query with the new access token
-        query.accesstoken = newBearer;
+    if (!docent) {
+      console.error("Document not found");
+      return res.status(404).end();
+    }
 
-        const results = await database
-          .collection("gebruikers")
-          .updateOne(query, { $set: req.body });
-        console.error("results:", results);
+    const newBearer = await refreshAccessToken(database, bearer);
+    console.log("New Access Token:", newBearer);
 
-        if (results.modifiedCount === 1) {
-          return res.status(200).send("Row updated");
-        } else {
-          console.error(
-            { endpoint: "/api/docenten/:id", error: "Bad Request" },
-            "PATCH request docent failed"
-          );
-          return res.status(400).end();
-        }
-      } catch (error) {
-        console.error(
-          { endpoint: "/api/docenten/:id", error },
-          "Error in PATCH request docent"
-        );
-        return res
-          .status(500)
-          .json({ error: "An error occurred during PATCH request" });
-      }
-    });
+    const updateFields = { ...req.body };
+    delete updateFields._id; // Exclude the _id field from the update object
+    console.log("Update Fields:", updateFields);
+
+    const updatedResults = await database.collection("docenten").updateOne(
+      query,
+      { $set: updateFields } // Use the updateFields object here
+    );
+    console.log("Update result:", updatedResults);
+
+    if (updatedResults.modifiedCount === 1) {
+      console.log("Document updated successfully");
+      return res.status(200).send("Document updated");
+    } else {
+      console.error("PATCH request docent failed");
+      return res.status(400).end();
+    }
+  } catch (error) {
+    console.error("Error in PATCH request docent:", error);
+    return res.status(500).json({ error: "An error occurred during PATCH request" });
+  }
+});
+
 
     // DELETE docent
     app.delete("/api/docenten/:id", async (req, res) => {
-      log.info(
-        { endpoint: "/api/docenten/:id" },
-        "DELETE request docent received"
-      );
-      const query = { _id: new ObjectId(req.params.id) };
-
       try {
+        const query = { _id: ObjectId.createFromHexString(req.params.id) };
         log.info(
-          { endpoint: "/api/docenten/:id", bearer: _bearer },
+          { endpoint: "/api/docenten/:id", query },
+          "DELETE request docent received"
+        );
+    
+        const bearer = req.headers.authorization.split(" ")[1];
+        log.info(
+          { endpoint: "/api/docenten/:id", bearer },
           "Access token verification"
         );
-        _bearer = refreshAccessToken(_bearer);
-
+    
+        const newBearer = await refreshAccessToken(database, bearer);
+        log.info(
+          { endpoint: "/api/docenten/:id", bearer: newBearer },
+          "Access token refreshed"
+        );
+    
         const result = await database.collection("docenten").deleteOne(query);
-        if (result.acknowledged) {
+        if (result.deletedCount === 1) {
           log.info(
-            { endpoint: "/api/docenten/:id", bearer: _bearer },
+            { endpoint: "/api/docenten/:id", bearer: newBearer },
             "Docent deleted"
           );
           return res.status(200).send("Docent verwijderd");
